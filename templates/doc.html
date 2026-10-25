@@ -1,0 +1,40 @@
+{{define "doc.html"}}{{template "top" .}}
+{{with .Page}}
+<div class="docs">
+  <aside class="sidebar" aria-label="Документация">
+    <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-expanded="false">Разделы документации</button>
+    <nav class="sidebar-nav" data-sidebar>
+      <p class="sidebar-title">Документация</p>
+      <ul>
+        {{range .Nav}}<li><a href="{{.URL}}"{{if .Active}} aria-current="page"{{end}}>{{.Label}}</a></li>
+        {{end}}
+      </ul>
+      <p class="sidebar-title">Попробовать</p>
+      <ul>
+        <li><a href="/demo/">Живое демо</a></li>
+        <li><a href="/ui/">Консоль /ui/</a></li>
+      </ul>
+    </nav>
+  </aside>
+  <main id="main" class="doc">
+    <article class="prose">
+      {{.Content}}
+    </article>
+    <nav class="pager" aria-label="Соседние страницы">
+      {{with .Prev}}<a class="pager-prev" href="{{.URL}}"><span>Назад</span>{{.Label}}</a>{{else}}<span></span>{{end}}
+      {{with .Next}}<a class="pager-next" href="{{.URL}}"><span>Дальше</span>{{.Label}}</a>{{end}}
+    </nav>
+    <p class="edit"><a href="{{.EditURL}}" rel="noopener">Предложить правку на GitHub</a></p>
+  </main>
+  {{if .Headings}}
+  <aside class="toc" aria-label="На этой странице">
+    <p class="toc-title">На странице</p>
+    <ul>
+      {{range .Headings}}<li{{if indent .Level}} class="sub"{{end}}><a href="#{{.ID}}">{{.Text}}</a></li>
+      {{end}}
+    </ul>
+  </aside>
+  {{end}}
+</div>
+{{end}}
+{{template "bottom" .}}{{end}}

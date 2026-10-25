@@ -1,0 +1,153 @@
+{{define "demo.html"}}{{template "top" .}}
+<main id="main" class="demo" data-demo>
+  <section class="demo-head">
+    <div class="wrap">
+      <p class="eyebrow">Живое демо</p>
+      <h1>Запустите процесс и посмотрите, как его ведёт движок</h1>
+      <p class="lead">На этом сервере работает демо-сервис go-bpm — <code>examples/demo</code> из репозитория
+        с PostgreSQL. Выберите процесс, запустите экземпляр и следите за ним: статус, пройденные элементы,
+        переменные. Полная история на схеме и все экземпляры — в <a href="/ui/">консоли</a>.</p>
+      <div class="demo-status" data-status>
+        <span class="pulse"></span><span data-status-text>Проверяем, отвечает ли демо…</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap demo-grid">
+    <div class="processes" data-processes>
+      <article class="proc" data-process="TestUserTask">
+        <header>
+          <h2>Согласование заявки</h2>
+          <code class="proc-id">TestUserTask</code>
+          <span class="count" data-count></span>
+        </header>
+        <img src="/docs/images/demo-user-task.svg" alt="TestUserTask: «Согласовать заявку», шлюз «Согласовано?», возврат на «Исправить заявку»" loading="lazy">
+        <p>Задачи пользователей как в Camunda 7. Заявку согласует менеджер из группы <code>managers</code>;
+          вернёт на исправление — задача сразу назначится инициатору <code>alice</code>, после исправления
+          снова уйдёт на согласование.</p>
+        <div class="runs">
+          <button class="btn btn-primary" type="button"
+            data-start='{"variables":{"initiator":"alice"},"businessKey":"request"}'>Подать заявку</button>
+        </div>
+        <a class="proc-more" href="/docs/examples/#testusertask-задачи-пользователей">Как устроен процесс</a>
+      </article>
+
+      <article class="proc" data-process="TestDecision">
+        <header>
+          <h2>Бизнес-правила DMN</h2>
+          <code class="proc-id">TestDecision</code>
+          <span class="count" data-count></span>
+        </header>
+        <img src="/docs/images/demo-decision.svg" alt="TestDecision: две задачи бизнес-правил подряд" loading="lazy">
+        <p>Две задачи бизнес-правил подряд: таблица <code>Decision_1</code> по входам <code>a</code> и
+          <code>b</code> выбирает <code>c</code>. Решение скомпилировано в Go — цепочка <code>if</code>.</p>
+        <div class="runs">
+          <button class="btn" type="button" data-start='{"variables":{"a":"foo","b":"bar"}}'>a=foo, b=bar</button>
+          <button class="btn" type="button" data-start='{"variables":{"a":"some","b":"x"}}'>a=some, b=x</button>
+          <button class="btn" type="button" data-start='{"variables":{"a":"z","b":"some"}}'>a=z, b=some</button>
+          <button class="btn" type="button" data-start='{"variables":{"a":"z","b":"z"}}'>a=z, b=z</button>
+        </div>
+        <a class="proc-more" href="/docs/examples/#testdecision-бизнес-правила-dmn">Как устроен процесс</a>
+      </article>
+
+      <article class="proc" data-process="TestBpmProcess">
+        <header>
+          <h2>Шлюзы, скрипт и call activity</h2>
+          <code class="proc-id">TestBpmProcess</code>
+          <span class="count" data-count></span>
+        </header>
+        <img src="/docs/images/demo-bpm-process.svg" alt="TestBpmProcess: метод, service task, call activity, шлюз по amount, скрипт и параллельные ветки" loading="lazy">
+        <p>Метод, service task, вызов процесса <code>testSubProcess</code>, exclusive gateway по
+          <code>amount</code>. При <code>amount = 1</code> — ветка «нет»: скрипт и две параллельные ветки
+          со слиянием.</p>
+        <div class="runs">
+          <button class="btn" type="button" data-start='{"variables":{"amount":55}}'>amount = 55</button>
+          <button class="btn" type="button" data-start='{"variables":{"amount":1}}'>amount = 1</button>
+        </div>
+        <a class="proc-more" href="/docs/examples/#testbpmprocess-шлюзы-скрипт-параллельные-ветки-call-activity">Как устроен процесс</a>
+      </article>
+
+      <article class="proc" data-process="testSubProcess">
+        <header>
+          <h2>Параллельные service task</h2>
+          <code class="proc-id">testSubProcess</code>
+          <span class="count" data-count></span>
+        </header>
+        <img src="/docs/images/demo-sub-process.svg" alt="testSubProcess: метод и три параллельные ветки service task со слиянием" loading="lazy">
+        <p>Три параллельные ветки из service task: каждая ставит свою задачу очереди, обработчики разных
+          jobType выполняются одновременно, слияние ждёт все три.</p>
+        <div class="runs">
+          <button class="btn" type="button" data-start='{}'>Запустить</button>
+        </div>
+        <a class="proc-more" href="/docs/examples/#testsubprocess-параллельные-service-task">Как устроен процесс</a>
+      </article>
+
+      <article class="proc" data-process="TestTimerAndException">
+        <header>
+          <h2>Таймеры и ошибки</h2>
+          <code class="proc-id">TestTimerAndException</code>
+          <span class="count" data-count></span>
+        </header>
+        <img src="/docs/images/demo-timer-and-exception.svg" alt="TestTimerAndException: граничные таймеры и ошибки, промежуточный таймер" loading="lazy">
+        <p>Промежуточный таймер на 3 секунды и граничные события. Методы демо — заглушки, поэтому процесс идёт
+          по основному пути; как заставить сработать граничные события — в разборе примера.</p>
+        <div class="runs">
+          <button class="btn" type="button" data-start='{}'>Запустить</button>
+        </div>
+        <a class="proc-more" href="/docs/examples/#testtimerandexception-таймеры-и-ошибки">Как устроен процесс</a>
+      </article>
+    </div>
+
+    <aside class="run" data-run aria-live="polite">
+      <div class="run-card">
+        <div class="run-empty" data-run-empty>
+          <h2>Ваш экземпляр</h2>
+          <p>Запустите любой процесс слева — здесь появится его статус и путь токена. Обновляется само.</p>
+          <div class="run-curl">
+            <p class="muted">То же самое из терминала:</p>
+            <div class="code" data-lang="sh"><pre><code><span class="tok-builtin">curl</span> <span class="tok-flag">-XPOST</span> <span data-origin>https://go-bpm.tech</span>/api/v1/processes/TestDecision/instances \
+  <span class="tok-flag">-d</span> <span class="tok-string">'{"variables":{"a":"foo","b":"bar"}}'</span></code></pre></div>
+          </div>
+        </div>
+        <div class="run-body" data-run-body hidden>
+          <header class="run-head">
+            <div>
+              <p class="run-proc" data-run-proc></p>
+              <code class="run-id" data-run-id></code>
+            </div>
+            <span class="badge" data-run-status></span>
+          </header>
+          <div class="run-tasks" data-run-tasks hidden></div>
+          <ol class="timeline" data-run-timeline></ol>
+          <div class="run-vars" data-run-vars hidden>
+            <p class="run-label">Переменные</p>
+            <pre data-run-vars-json></pre>
+          </div>
+          <div class="run-links">
+            <a class="btn btn-primary" data-run-history href="/ui/">История на схеме</a>
+            <a class="btn btn-ghost" href="/ui/#/instances">Все экземпляры</a>
+          </div>
+        </div>
+        <p class="run-error" data-run-error hidden></p>
+      </div>
+      <p class="demo-note">Демо общее: экземпляры видны всем посетителям, завершённые удаляются через
+        несколько дней. Не вводите в переменные ничего личного.</p>
+    </aside>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap">
+      <h2 class="section-title">Консоль <code>/ui/</code></h2>
+      <p class="muted center">Встроена в go-bpm: <code>webui.Register(mux, history)</code>. Здесь она та же, что
+        в демо-сервисе, — со всеми процессами и экземплярами.</p>
+      <div class="console-shots">
+        <a href="/ui/#/processes"><img src="/docs/images/console-processes.png" alt="Вкладка «Процессы»: счётчики экземпляров по статусам и схема выбранного процесса" loading="lazy"><span>Процессы и схемы</span></a>
+        <a href="/ui/#/instances"><img src="/docs/images/console-instances.png" alt="Вкладка «Экземпляры»: фильтры, статусы, бизнес-ключи и ссылки на родителя" loading="lazy"><span>Поиск экземпляров</span></a>
+        <a href="/ui/#/tasks"><img src="/docs/images/console-tasks.png" alt="Вкладка «Задачи»: мои задачи пользователя и очередь группы" loading="lazy"><span>Задачи пользователей</span></a>
+      </div>
+      <p class="center"><a class="btn btn-primary" href="/ui/">Открыть консоль</a></p>
+    </div>
+  </section>
+</main>
+<script src="/static/demo.js" defer></script>
+{{template "bottom" .}}{{end}}

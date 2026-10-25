@@ -1,0 +1,362 @@
+// Команда build собирает статический сайт go-bpm: главная, документация из docs/ репозитория go-bpm, страница демо.
+//
+//	go run ./cmd/build -docs ../go-bpm/docs -out dist
+//
+// Документация не копируется в этот репозиторий: она пишется в go-bpm вместе с кодом и забирается на сборке.
+package main
+
+import (
+	"bytes"
+	"encoding/json"
+	"flag"
+	"fmt"
+	"html/template"
+	"io/fs"
+	"log"
+	"os"
+	"path"
+	"path/filepath"
+	"regexp"
+	"strings"
+	"time"
+
+	site "github.com/nicolas-vp/go-bpm-site"
+	"github.com/nicolas-vp/go-bpm-site/internal/md"
+)
+
+// pages - страницы документации в порядке меню. README.md - обзор, /docs/.
+var pages = []struct {
+	file, slug, label string
+}{
+	{"README.md", "", "Обзор"},
+	{"quickstart.md", "quickstart", "Быстрый старт"},
+	{"concepts.md", "concepts", "Принципы работы"},
+	{"bpmn.md", "bpmn", "Моделирование BPMN"},
+	{"dmn.md", "dmn", "Решения DMN"},
+	{"generator.md", "generator", "Генератор кода"},
+	{"examples.md", "examples", "Разбор примеров"},
+	{"running.md", "running", "Запуск и эксплуатация"},
+	{"api.md", "api", "HTTP API и консоль"},
+}
+
+type config struct {
+	docs, out, repo, ref, commit string
+}
+
+func main() {
+	var c config
+	flag.StringVar(&c.docs, "docs", "../go-bpm/docs", "каталог docs репозитория go-bpm")
+	flag.StringVar(&c.out, "out", "dist", "куда собрать сайт")
+	flag.StringVar(&c.repo, "repo", "https://github.com/nicolas-vp/go-bpm", "репозиторий go-bpm для ссылок на код")
+	flag.StringVar(&c.ref, "ref", "main", "ветка go-bpm для ссылок на код")
+	flag.StringVar(&c.commit, "commit", "", "коммит go-bpm, из которого взята документация (для подвала)")
+	flag.Parse()
+	if err := build(c); err != nil {
+		log.Fatal(err)
+	}
+}
+
+// navItem - пункт меню документации.
+type navItem struct {
+	URL, Label string
+	Active     bool
+}
+
+// docPage - данные шаблона страницы документации.
+type docPage struct {
+	Title    string
+	Content  template.HTML
+	Headings []md.Heading
+	Nav      []navItem
+	Prev     *navItem
+	Next     *navItem
+	EditURL  string
+}
+
+// layout - общие данные всех страниц.
+type layout struct {
+	Title       string
+	Description string
+	Section     string // home, docs, demo - подсветка в шапке
+	Repo        string
+	Commit      string
+	CommitURL   string
+	Year        int
+	Page        any
+}
+
+// searchEntry - раздел страницы в поисковом индексе.
+type searchEntry struct {
+	URL   string `json:"u"`
+	Page  string `json:"p"`
+	Title string `json:"t"`
+	Text  string `json:"x"`
+}
+
+func build(c config) error {
+	tpl, err := template.New("").Funcs(template.FuncMap{
+		"indent": func(level int) bool { return level > 2 },
+	}).ParseFS(site.Templates, "templates/*.html")
+	if err != nil {
+		return err
+	}
+	if err := os.RemoveAll(c.out); err != nil {
+		return err
+	}
+	base := layout{Repo: c.repo, Year: time.Now().Year()}
+	if c.commit != "" {
+		base.Commit = c.commit[:min(7, len(c.commit))]
+		base.CommitURL = c.repo + "/commit/" + c.commit
+	}
+
+	published := map[string]string{} // файл docs -> адрес на сайте
+	for _, p := range pages {
+		published[p.file] = pageURL(p.slug)
+	}
+
+	var nav []navItem
+	for _, p := range pages {
+		nav = append(nav, navItem{URL: pageURL(p.slug), Label: p.label})
+	}
+
+	var (
+		index   []searchEntry
+		anchors = map[string]bool{} // адрес#якорь, которые есть на сайте
+		links   []string            // внутренние ссылки для проверки
+	)
+	for i, p := range pages {
+		src, err := os.ReadFile(filepath.Join(c.docs, p.file))
+		if err != nil {
+			return err
+		}
+		url := pageURL(p.slug)
+		doc := md.Render(string(src), md.Options{Link: func(dest string, image bool) string {
+			u := rewriteLink(c, published, dest, image)
+			if strings.HasPrefix(u, "/docs/") && !image {
+				links = append(links, p.file+" → "+u)
+			}
+			if strings.HasPrefix(u, "#") {
+				links = append(links, p.file+" → "+url+u)
+			}
+			return u
+		}})
+		anchors[url] = true
+		for _, h := range doc.Headings {
+			anchors[url+"#"+h.ID] = true
+		}
+		for _, id := range allIDs(doc.HTML) {
+			anchors[url+"#"+id] = true
+		}
+		index = append(index, sections(url, doc)...)
+
+		pnav := make([]navItem, len(nav))
+		copy(pnav, nav)
+		pnav[i].Active = true
+		dp := docPage{
+			Title:    doc.Title,
+			Content:  template.HTML(doc.HTML),
+			Headings: doc.Headings,
+			Nav:      pnav,
+			EditURL:  c.repo + "/edit/" + c.ref + "/docs/" + p.file,
+		}
+		if i > 0 {
+			dp.Prev = &nav[i-1]
+		}
+		if i+1 < len(nav) {
+			dp.Next = &nav[i+1]
+		}
+		l := base
+		l.Title, l.Section, l.Page = doc.Title, "docs", dp
+		l.Description = description(string(src))
+		if err := render(tpl, "doc.html", l, filepath.Join(c.out, url, "index.html")); err != nil {
+			return err
+		}
+	}
+
+	for _, link := range links {
+		target := link[strings.Index(link, "→ ")+len("→ "):]
+		if !anchors[target] {
+			log.Printf("предупреждение: ссылка ведёт в никуда: %s", link)
+		}
+	}
+
+	home := base
+	home.Title, home.Section = "BPM-движок на PostgreSQL для Go-сервисов", "home"
+	home.Description = "go-bpm: процессы в BPMN и DMN, генератор типизированного Go-кода и движок на очереди задач в PostgreSQL."
+	if err := render(tpl, "home.html", home, filepath.Join(c.out, "index.html")); err != nil {
+		return err
+	}
+	demo := base
+	demo.Title, demo.Section = "Живое демо", "demo"
+	demo.Description = "Запустите процессы демо go-bpm и посмотрите их историю на схеме."
+	if err := render(tpl, "demo.html", demo, filepath.Join(c.out, "demo", "index.html")); err != nil {
+		return err
+	}
+	notFound := base
+	notFound.Title = "Страница не найдена"
+	if err := render(tpl, "404.html", notFound, filepath.Join(c.out, "404.html")); err != nil {
+		return err
+	}
+
+	data, err := json.Marshal(index)
+	if err != nil {
+		return err
+	}
+	if err := write(filepath.Join(c.out, "search.json"), data); err != nil {
+		return err
+	}
+	if err := copyFS(site.Static, "static", filepath.Join(c.out, "static")); err != nil {
+		return err
+	}
+	return copyDir(filepath.Join(c.docs, "images"), filepath.Join(c.out, "docs", "images"))
+}
+
+func pageURL(slug string) string {
+	if slug == "" {
+		return "/docs/"
+	}
+	return "/docs/" + slug + "/"
+}
+
+// rewriteLink переводит ссылку из docs/*.md в адрес на сайте: страницы - на сайт, картинки - в /docs/images/,
+// остальное в репозитории (код, context.md) - на GitHub.
+func rewriteLink(c config, published map[string]string, dest string, image bool) string {
+	if dest == "" || strings.HasPrefix(dest, "#") || strings.Contains(dest, "://") || strings.HasPrefix(dest, "mailto:") {
+		return dest
+	}
+	file, anchor, _ := strings.Cut(dest, "#")
+	if anchor != "" {
+		anchor = "#" + anchor
+	}
+	if u, ok := published[file]; ok {
+		return u + anchor
+	}
+	p := path.Clean(path.Join("docs", file))
+	if strings.HasPrefix(p, "docs/images/") {
+		return "/" + p
+	}
+	if p == "." {
+		return c.repo
+	}
+	if image {
+		return c.repo + "/raw/" + c.ref + "/" + p
+	}
+	return c.repo + "/blob/" + c.ref + "/" + p + anchor
+}
+
+var (
+	idRe  = regexp.MustCompile(` id="([^"]+)"`)
+	tagRe = regexp.MustCompile(`<[^>]+>`)
+)
+
+func allIDs(h string) []string {
+	var ids []string
+	for _, m := range idRe.FindAllStringSubmatch(h, -1) {
+		ids = append(ids, m[1])
+	}
+	return ids
+}
+
+// sections режет страницу по заголовкам ## и ### для поиска.
+func sections(url string, doc md.Doc) []searchEntry {
+	h := doc.HTML
+	var out []searchEntry
+	add := func(id, title, body string) {
+		text := strings.Join(strings.Fields(unescape(tagRe.ReplaceAllString(body, " "))), " ")
+		if len([]rune(text)) > 600 {
+			text = string([]rune(text)[:600])
+		}
+		u := url
+		if id != "" {
+			u += "#" + id
+		}
+		out = append(out, searchEntry{URL: u, Page: doc.Title, Title: title, Text: text})
+	}
+	prevID, prevTitle, prevStart := "", doc.Title, 0
+	for _, hd := range doc.Headings {
+		marker := `<h` + fmt.Sprint(hd.Level) + ` id="` + template.HTMLEscapeString(hd.ID) + `"`
+		pos := strings.Index(h, marker)
+		if pos < 0 {
+			continue
+		}
+		add(prevID, prevTitle, h[prevStart:pos])
+		prevID, prevTitle = hd.ID, hd.Text
+		prevStart = pos + strings.Index(h[pos:], "</h") // заголовок не дублируем в тексте
+	}
+	add(prevID, prevTitle, h[prevStart:])
+	return out
+}
+
+func unescape(s string) string {
+	r := strings.NewReplacer("&lt;", "<", "&gt;", ">", "&amp;", "&", "&#34;", `"`, "&#39;", "'", "&quot;", `"`)
+	return r.Replace(s)
+}
+
+// description - первый абзац страницы для <meta name="description">.
+func description(src string) string {
+	for _, block := range strings.Split(src, "\n\n") {
+		t := strings.TrimSpace(block)
+		if t == "" || strings.HasPrefix(t, "#") || strings.HasPrefix(t, "|") || strings.HasPrefix(t, "!") ||
+			strings.HasPrefix(t, "```") || strings.HasPrefix(t, ">") || strings.HasPrefix(t, "-") {
+			continue
+		}
+		t = strings.Join(strings.Fields(t), " ")
+		t = regexp.MustCompile(`\[([^\]]*)\]\([^)]*\)`).ReplaceAllString(t, "$1")
+		t = strings.NewReplacer("`", "", "**", "").Replace(t)
+		if r := []rune(t); len(r) > 200 {
+			t = string(r[:200]) + "…"
+		}
+		return t
+	}
+	return ""
+}
+
+func render(tpl *template.Template, name string, data layout, file string) error {
+	var b bytes.Buffer
+	if err := tpl.ExecuteTemplate(&b, name, data); err != nil {
+		return fmt.Errorf("%s: %w", name, err)
+	}
+	return write(file, b.Bytes())
+}
+
+func write(file string, data []byte) error {
+	if err := os.MkdirAll(filepath.Dir(file), 0o755); err != nil {
+		return err
+	}
+	return os.WriteFile(file, data, 0o644)
+}
+
+func copyFS(fsys fs.FS, root, dst string) error {
+	return fs.WalkDir(fsys, root, func(p string, d fs.DirEntry, err error) error {
+		if err != nil || d.IsDir() {
+			return err
+		}
+		data, err := fs.ReadFile(fsys, p)
+		if err != nil {
+			return err
+		}
+		rel, _ := filepath.Rel(root, p)
+		return write(filepath.Join(dst, rel), data)
+	})
+}
+
+// copyDir копирует картинки документации; исходники схем (src/*.bpmn) сайту не нужны.
+func copyDir(src, dst string) error {
+	return filepath.WalkDir(src, func(p string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.IsDir() {
+			if d.Name() == "src" {
+				return filepath.SkipDir
+			}
+			return nil
+		}
+		data, err := os.ReadFile(p)
+		if err != nil {
+			return err
+		}
+		rel, _ := filepath.Rel(src, p)
+		return write(filepath.Join(dst, rel), data)
+	})
+}

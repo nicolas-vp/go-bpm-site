@@ -1,0 +1,191 @@
+{{define "home.html"}}{{template "top" .}}
+<main id="main">
+  <section class="hero">
+    <div class="wrap hero-in">
+      <div class="hero-text">
+        <p class="eyebrow">Открытый код · Go · PostgreSQL</p>
+        <h1>Процессы рисуются в BPMN.<br><span class="accent">Исполняются как Go-код.</span></h1>
+        <p class="lead">go-bpm превращает схемы BPMN и таблицы DMN в типизированный Go-код и исполняет его
+          на очереди задач в PostgreSQL — в той же базе, что и данные сервиса. Отдельного сервера процессов нет:
+          движок — библиотека внутри вашего сервиса.</p>
+        <div class="cta">
+          <a class="btn btn-primary" href="/docs/quickstart/">Быстрый старт</a>
+          <a class="btn" href="/demo/">Запустить демо</a>
+        </div>
+        <div class="install" data-copy-wrap>
+          <code><span class="prompt">$</span> go get github.com/nicolas-vp/go-bpm</code>
+          <button type="button" class="copy" data-copy="go get github.com/nicolas-vp/go-bpm" aria-label="Скопировать команду">Копировать</button>
+        </div>
+      </div>
+      <figure class="hero-flow" aria-label="Схема процесса и код, который из неё получается">
+        <div class="flow-card flow-bpmn">
+          <div class="flow-label"><span class="dot"></span>process/order.bpmn</div>
+          <img src="/docs/images/order.svg" alt="Процесс согласования заказа: проверка, шлюз «Крупный заказ?», согласование менеджером и уведомление клиента" width="666" height="170">
+        </div>
+        <div class="flow-arrow" aria-hidden="true">
+          <span>go generate</span>
+          <svg viewBox="0 0 24 40"><path d="M12 2v34M5 29l7 7 7-7"/></svg>
+        </div>
+        <div class="flow-card flow-code">
+          <div class="flow-label"><span class="dot dot-go"></span>order_approval/method_check_order.go</div>
+<pre><code><span class="tok-keyword">func</span> <span class="tok-func">CheckOrder</span>(ctx context.Context, svc *services.Services,
+	data *model.DataModel) <span class="tok-builtin">error</span> {
+	<span class="tok-keyword">if</span> data.Amount &lt;= <span class="tok-number">0</span> {
+		<span class="tok-keyword">return</span> fmt.<span class="tok-func">Errorf</span>(<span class="tok-string">"сумма должна быть положительной"</span>)
+	}
+	data.Checked = <span class="tok-builtin">true</span>
+	<span class="tok-keyword">return</span> <span class="tok-builtin">nil</span>
+}</code></pre>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <h2 class="section-title">Как это устроено</h2>
+      <ol class="steps">
+        <li>
+          <span class="step-n">1</span>
+          <h3>Нарисуйте процесс</h3>
+          <p>В Camunda Modeler, платформа Camunda 8. Схемы BPMN и таблицы DMN лежат в <code>process/</code>
+            репозитория сервиса и проходят ревью вместе с кодом.</p>
+        </li>
+        <li>
+          <span class="step-n">2</span>
+          <h3>Сгенерируйте код</h3>
+          <p><code>go-bpm-gen</code> проверяет схему и создаёт Go: переходы, условия шлюзов, скрипты, решения DMN
+            и заготовки ваших методов. Опечатку в условии покажет компилятор.</p>
+        </li>
+        <li>
+          <span class="step-n">3</span>
+          <h3>Запустите сервис</h3>
+          <p>Движок исполняет процесс на очереди задач в PostgreSQL. Каждый шаг — задача очереди, все его эффекты
+            пишутся одной транзакцией.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap">
+      <h2 class="section-title">Почему go-bpm</h2>
+      <div class="features">
+        <article class="feature">
+          <h3>Процесс — это код</h3>
+          <p>Условия шлюзов, скрипты и таблицы DMN генерируются в Go-функции до запуска. Нет интерпретатора
+            выражений в рантайме: условие шлюза — обычный <code>if</code>.</p>
+        </article>
+        <article class="feature">
+          <h3>Шаг — одна транзакция</h3>
+          <p>Переход токена, история и новые задачи пишутся вместе с завершением задачи очереди. Упал сервис
+            посередине — шаг повторится целиком, токен не потеряется и не раздвоится.</p>
+        </article>
+        <article class="feature">
+          <h3>Данные — Go-структура</h3>
+          <p>Переменные процесса читаются в вашу <code>DataModel</code>. Методы работают с полями, а не
+            с <code>map[string]any</code>.</p>
+        </article>
+        <article class="feature">
+          <h3>Нужен только PostgreSQL</h3>
+          <p>Очередь, история, экземпляры и задачи пользователей — таблицы <code>bpm_*</code> в вашей базе.
+            Сервис масштабируется несколькими экземплярами на одной базе.</p>
+        </article>
+        <article class="feature">
+          <h3>Старт в транзакции сервиса</h3>
+          <p><code>StartProcessTx</code> запускает процесс в той же транзакции, где сервис пишет свои данные:
+            заказ и его процесс появятся вместе или не появятся вовсе.</p>
+        </article>
+        <article class="feature">
+          <h3>Консоль из коробки</h3>
+          <p><code>/ui/</code>: процессы, запуск, поиск экземпляров, задачи пользователей и история экземпляра
+            поверх диаграммы bpmn-js со сработавшими правилами DMN.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap split">
+      <div>
+        <h2 class="section-title">Что умеет движок</h2>
+        <p class="muted">Генератор проверяет BPMN и отвергает то, что не поддерживается, — на этапе генерации,
+          а не в рантайме.</p>
+        <ul class="checks">
+          <li>Task, script task, service task с повторами</li>
+          <li>Exclusive и parallel gateway</li>
+          <li>Business rule task — решения DMN, скомпилированные в Go</li>
+          <li>User task как в Camunda 7: исполнитель, кандидаты, группы</li>
+          <li>Таймеры, граничные события таймера и ошибки</li>
+          <li>Встроенные подпроцессы и call activity</li>
+          <li>Экземпляры с бизнес-ключом и историей в базе</li>
+          <li>HTTP API процессов, экземпляров и задач</li>
+        </ul>
+        <p><a class="more" href="/docs/bpmn/#сводная-таблица">Все элементы и ограничения</a></p>
+      </div>
+      <figure class="shot">
+        <img src="/docs/images/elements.svg" alt="Поддерживаемые элементы BPMN: события, шлюзы, виды задач, граничные события, подпроцесс" loading="lazy">
+      </figure>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap">
+      <h2 class="section-title">Встроить в сервис</h2>
+      <p class="muted center">Движок, API и консоль подключаются к вашему <code>http.ServeMux</code> и пулу <code>pgx</code>.</p>
+      <div class="embed">
+        <div class="code" data-lang="sh"><pre><code><span class="tok-builtin">go</span> get github.com/nicolas-vp/go-bpm
+<span class="tok-builtin">go</span> get <span class="tok-flag">-tool</span> github.com/nicolas-vp/go-bpm/cmd/go-bpm-gen</code></pre></div>
+        <div class="code" data-lang="go"><pre><code>q := queue.<span class="tok-func">New</span>(pool, queue.Options{})
+e, _ := engine.<span class="tok-func">New</span>(q, engine.Config{
+	History:      engine.HistoryConfig{ToDB: on}, <span class="tok-comment">// экземпляры и история в базе</span>
+	RulesHistory: engine.HistoryConfig{ToDB: on}, <span class="tok-comment">// сработавшие правила DMN</span>
+}, bpmgen.<span class="tok-func">Processes</span>(svc), bpmgen.<span class="tok-func">Queues</span>(svc))
+
+httpapi.<span class="tok-func">Register</span>(mux, e, history) <span class="tok-comment">// /api/v1/processes, /api/v1/instances</span>
+webui.<span class="tok-func">Register</span>(mux, history)      <span class="tok-comment">// /ui/ — консоль и история экземпляра</span>
+
+q.<span class="tok-func">Start</span>(ctx)</code></pre></div>
+      </div>
+      <p class="center"><a class="more" href="/docs/quickstart/#свой-сервис-с-нуля">Свой сервис с нуля, пошагово</a></p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <h2 class="section-title">История экземпляра на схеме</h2>
+      <p class="muted center">Где прошёл токен, какие переменные были у каждой задачи, какое правило DMN сработало.</p>
+      <div class="gallery" data-gallery>
+        <div class="gallery-tabs" role="tablist">
+          <button type="button" role="tab" aria-selected="true" data-tab="0">Задачи пользователей</button>
+          <button type="button" role="tab" aria-selected="false" data-tab="1">Правила DMN</button>
+          <button type="button" role="tab" aria-selected="false" data-tab="2">Подпроцесс</button>
+          <button type="button" role="tab" aria-selected="false" data-tab="3">Ошибка</button>
+        </div>
+        <figure class="gallery-frame">
+          <img src="/docs/images/history-user-task.png" alt="История TestUserTask: блок «Назначение» с двумя карточками задачи «Согласовать заявку»" loading="lazy" data-pane="0">
+          <img src="/docs/images/history-rules.png" alt="Сработавшие правила DMN: подсвечена строка таблицы решения" loading="lazy" data-pane="1" hidden>
+          <img src="/docs/images/history-call-activity.png" alt="История TestBpmProcess: ветка со скриптом, параллельные задачи и вызванный подпроцесс" loading="lazy" data-pane="2" hidden>
+          <img src="/docs/images/history-error.png" alt="История TestTimerAndException: «это 2» прервана граничным событием ошибки, в панели — errorCode FAIL2" loading="lazy" data-pane="3" hidden>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="banner">
+        <div>
+          <h2>Посмотрите на работающий движок</h2>
+          <p>На этом сервере работает демо-сервис go-bpm с пятью процессами. Запустите экземпляр, согласуйте
+            заявку как менеджер и откройте историю на схеме.</p>
+        </div>
+        <div class="banner-cta">
+          <a class="btn btn-primary" href="/demo/">Открыть демо</a>
+          <a class="btn btn-ghost" href="/docs/examples/">Разбор процессов демо</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+{{template "bottom" .}}{{end}}
