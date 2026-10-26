@@ -24,6 +24,7 @@
       <a href="/docs/"{{if eq .Section "docs"}} aria-current="page"{{end}}>Документация</a>
       <a class="nav-extra" href="/docs/testing/">Тестирование</a>
       <a class="nav-extra" href="/docs/performance/">Скорость</a>
+      <a class="nav-extra" href="/docs/about/">О нас</a>
       <a href="/demo/"{{if eq .Section "demo"}} aria-current="page"{{end}}>Демо</a>
       <a href="/ui/">Консоль</a>
       <a href="{{.Repo}}" rel="noopener">GitHub</a>
@@ -52,7 +53,7 @@
   <div class="footer-in">
     <div>
       <strong>go-bpm</strong> — BPM-движок на PostgreSQL для Go-сервисов.
-      Открытый код на <a href="{{.Repo}}" rel="noopener">GitHub</a>.
+      Открытый код на <a href="{{.Repo}}" rel="noopener">GitHub</a>. <a href="/docs/about/">О нас</a>
     </div>
     <div class="footer-meta">
       {{if .Commit}}Документация из коммита <a href="{{.CommitURL}}" rel="noopener"><code>{{.Commit}}</code></a>{{end}}

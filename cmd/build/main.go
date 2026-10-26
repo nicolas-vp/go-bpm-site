@@ -41,6 +41,7 @@ var pages = []struct {
 	{"api.md", "api", "HTTP API и консоль", false},
 	{"testing.md", "testing", "Тестирование процессов", true},
 	{"performance.md", "performance", "Насколько быстрый go-bpm", true},
+	{"about.md", "about", "О нас", true},
 }
 
 type config struct {
