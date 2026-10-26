@@ -1,0 +1,79 @@
+{
+  "process": "BenchServiceTasks",
+  "history": false,
+  "n": 100000,
+  "starters": 8,
+  "system_workers": 16,
+  "task_workers": 16,
+  "pool_size": 48,
+  "started_in_ms": 229167,
+  "checkpoints": [
+    {
+      "completed": 1000,
+      "elapsed_ms": 1126,
+      "per_second": 887.3522700335837
+    },
+    {
+      "completed": 10000,
+      "elapsed_ms": 11186,
+      "per_second": 893.9328667896928
+    },
+    {
+      "completed": 20000,
+      "elapsed_ms": 22145,
+      "per_second": 903.1135858545881
+    },
+    {
+      "completed": 30000,
+      "elapsed_ms": 66148,
+      "per_second": 453.5226915831645
+    },
+    {
+      "completed": 40000,
+      "elapsed_ms": 77134,
+      "per_second": 518.5715150273383
+    },
+    {
+      "completed": 50000,
+      "elapsed_ms": 88045,
+      "per_second": 567.8901224722977
+    },
+    {
+      "completed": 60000,
+      "elapsed_ms": 99152,
+      "per_second": 605.1273620660056
+    },
+    {
+      "completed": 70000,
+      "elapsed_ms": 110275,
+      "per_second": 634.772513123939
+    },
+    {
+      "completed": 80000,
+      "elapsed_ms": 144768,
+      "per_second": 552.6079203442498
+    },
+    {
+      "completed": 90000,
+      "elapsed_ms": 196826,
+      "per_second": 457.2552220946889
+    },
+    {
+      "completed": 100000,
+      "elapsed_ms": 229189,
+      "per_second": 436.32048987620647
+    }
+  ],
+  "total_ms": 229214,
+  "per_second": 436.2726325012483,
+  "rest_calls": 200000,
+  "db_size_mb": 160.38836574554443,
+  "cpu": "Intel(R) Core(TM) i7-4770K CPU @ 3.50GHz",
+  "num_cpu": 8,
+  "go_version": "go1.26.8",
+  "postgres": "18.6 (Debian 18.6-1.pgdg13+2)",
+  "synchronous_commit": "on",
+  "commits_per_second_before": 36173.8,
+  "commits_per_second_after": 36042.2,
+  "date": "2026-10-26"
+}

@@ -40,11 +40,13 @@ var pages = []struct {
 	{"running.md", "running", "Запуск и эксплуатация", false},
 	{"api.md", "api", "HTTP API и консоль", false},
 	{"testing.md", "testing", "Тестирование процессов", true},
+	{"performance.md", "performance", "Насколько быстрый go-bpm", true},
 }
 
 type config struct {
 	docs, out, repo, ref, commit string
 	siteRepo                     string
+	benchResults                 string
 }
 
 func main() {
@@ -54,6 +56,7 @@ func main() {
 	flag.StringVar(&c.repo, "repo", "https://github.com/nicolas-vp/go-bpm", "репозиторий go-bpm для ссылок на код")
 	flag.StringVar(&c.ref, "ref", "main", "ветка go-bpm для ссылок на код")
 	flag.StringVar(&c.commit, "commit", "", "коммит go-bpm, из которого взята документация (для подвала)")
+	flag.StringVar(&c.benchResults, "bench-results", "bench/results", "результаты нагрузочного теста для страницы производительности")
 	flag.StringVar(&c.siteRepo, "site-repo", "https://github.com/nicolas-vp/go-bpm-site", "репозиторий сайта для ссылок «править»")
 	flag.Parse()
 	if err := build(c); err != nil {
@@ -154,6 +157,15 @@ func build(c config) error {
 			}
 			return u
 		}})
+		if p.file == "performance.md" {
+			perf, err := loadPerf(filepath.Join("content", "performance-article.json"), c.benchResults)
+			if err != nil {
+				return err
+			}
+			if doc.HTML, err = perf.render(doc.HTML); err != nil {
+				return fmt.Errorf("%s: %w", p.file, err)
+			}
+		}
 		anchors[url] = true
 		for _, h := range doc.Headings {
 			anchors[url+"#"+h.ID] = true

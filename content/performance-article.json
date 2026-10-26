@@ -1,0 +1,20 @@
+{
+  "source": "https://habr.com/ru/companies/raiffeisenbank/articles/594117/",
+  "title": "Zeebe и Camunda: сравниваем известные BPM-системы под высокими нагрузками",
+  "date": "2021-12-14",
+  "stand": "Intel Core i7-4770K (4 ядра, 3,5 ГГц), SSD, 24 ГБ",
+  "note": "Экземпляров в секунду: число завершённых экземпляров, делённое на время от начала прогона. Значения - из таблиц статьи; строка bpm-light (clickhouse) посчитана из таблицы времени в мс.",
+  "checkpoints": [1000, 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000],
+  "systems": [
+    {"name": "Apache Camel", "history": false, "bpm": false, "per_second": [2217, 4029, 4087, 4154, 4135, 4138, 4128, 4112, 4167, 4130, 4154]},
+    {"name": "Spring Integration", "history": false, "bpm": false, "per_second": [1996, 3757, 3859, 3891, 3898, 3899, 3888, 3900, 3914, 3922, 3910]},
+    {"name": "bpm-light, без экспорта", "history": false, "bpm": true, "per_second": [1244, 2199, 2222, 2243, 2242, 2238, 2236, 2236, 2232, 2237, 2235]},
+    {"name": "Camunda, без истории (H2 в памяти)", "history": false, "bpm": true, "per_second": [971, 1565, 1569, 1579, 1584, 1582, 1591, 1587, 1593, 1582, 1577]},
+    {"name": "Zeebe, без экспорта", "history": false, "bpm": true, "per_second": [100, 112, 117, 118, 119, 119, 118, 118, 119, 117, 117]},
+    {"name": "bpm-light, экспорт в H2 (файл)", "history": true, "bpm": true, "per_second": [1105, 1943, 1970, 1976, 1978, 1960, 1967, 1957, 1972, 1963, 1960]},
+    {"name": "bpm-light, экспорт в Elasticsearch", "history": true, "bpm": true, "per_second": [307, 900, 1107, 1105, 1103, 1099, 1070, 1089, 1105, 1030, 1102]},
+    {"name": "bpm-light, экспорт в ClickHouse", "history": true, "bpm": true, "per_second": [700, 999, 1012, 991, 1003, 981, 1002, 1003, 999, 1004, 983]},
+    {"name": "Camunda, история в PostgreSQL", "history": true, "bpm": true, "per_second": [279, 346, 302, 331, 306, 319, 296, 309, 303, 296, 293]},
+    {"name": "Zeebe, экспорт в Elasticsearch", "history": true, "bpm": true, "per_second": [88, 106, 112, 114, 113, 115, 113, 113, 113, 113, 112]}
+  ]
+}

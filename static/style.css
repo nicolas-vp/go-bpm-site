@@ -988,3 +988,100 @@ img { max-width: 100%; height: auto; }
 @media (max-width: 420px) {
   .brand span { display: none; }
 }
+
+/* --- производительность: горизонтальные столбцы ----------------------------------------------------- */
+
+.perf-chart {
+  margin: 20px 0 28px;
+  padding: 18px 20px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  --perf-name: 290px;
+}
+.perf-axis {
+  position: relative;
+  height: 18px;
+  margin-left: var(--perf-name);
+  margin-right: 56px;
+  font-size: 12px;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.perf-axis span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
+.perf-axis span:first-child { transform: none; }
+.perf-chart .perf-bars { list-style: none; margin: 0; padding: 0; }
+.perf-row {
+  display: grid;
+  grid-template-columns: var(--perf-name) minmax(0, 1fr);
+  align-items: center;
+  min-height: 34px;
+  margin: 0 !important;
+  padding: 3px 0;
+  cursor: default;
+}
+.perf-name { padding-right: 14px; font-size: 14px; line-height: 1.3; color: var(--ink-2); }
+.perf-gobpm .perf-name { color: var(--ink); font-weight: 600; }
+.perf-track {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 34px;
+  margin-right: 56px;
+  /* сетка: тонкие линии на каждой тысяче, как подписи оси */
+  background-image: linear-gradient(to right, var(--line) 1px, transparent 1px);
+  background-size: calc(100% / var(--perf-steps, 5)) 100%;
+}
+.perf-bar {
+  height: 18px;
+  min-width: 2px;
+  border-radius: 0 4px 4px 0;
+  background: var(--ink-3);
+  opacity: 0.55;
+}
+.perf-gobpm .perf-bar { background: var(--accent); opacity: 1; }
+.perf-value {
+  margin-left: 8px;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.perf-gobpm .perf-value { color: var(--ink); font-weight: 600; }
+.perf-row:hover .perf-bar, .perf-row:focus-visible .perf-bar { opacity: 1; }
+.perf-row:hover .perf-name { color: var(--ink); }
+
+.perf-table td, .perf-table th { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.perf-table tr.perf-group td {
+  background: var(--bg-alt);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.perf-table tr.perf-gobpm td { font-weight: 600; }
+.perf-table tr.perf-gobpm td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
+
+.tip {
+  position: fixed;
+  z-index: 60;
+  max-width: 320px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow);
+  font-size: 13px;
+  line-height: 1.4;
+  pointer-events: none;
+}
+
+@media (max-width: 720px) {
+  .perf-chart { padding: 14px 12px 10px; --perf-name: 100%; }
+  .perf-axis { margin-left: 0; }
+  .perf-row { grid-template-columns: minmax(0, 1fr); padding: 6px 0; }
+  .perf-name { padding: 0 0 2px; font-size: 13px; }
+  .perf-track { height: 22px; }
+}

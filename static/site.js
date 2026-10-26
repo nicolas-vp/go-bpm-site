@@ -195,3 +195,32 @@
     });
   }
 })();
+
+// Подсказки к столбцам графиков: data-tip у строки, показывается у курсора и по фокусу с клавиатуры.
+(function () {
+  'use strict';
+  var rows = document.querySelectorAll('[data-tip]');
+  if (!rows.length) return;
+  var tip = document.createElement('div');
+  tip.className = 'tip';
+  tip.hidden = true;
+  tip.setAttribute('role', 'tooltip');
+  document.body.appendChild(tip);
+  function show(el, x, y) {
+    tip.textContent = el.dataset.tip;
+    tip.hidden = false;
+    var w = tip.offsetWidth, h = tip.offsetHeight;
+    tip.style.left = Math.max(8, Math.min(x + 14, window.innerWidth - w - 8)) + 'px';
+    tip.style.top = Math.max(8, y - h - 12) + 'px';
+  }
+  rows.forEach(function (el) {
+    el.tabIndex = 0;
+    el.addEventListener('mousemove', function (e) { show(el, e.clientX, e.clientY); });
+    el.addEventListener('mouseleave', function () { tip.hidden = true; });
+    el.addEventListener('focus', function () {
+      var r = el.getBoundingClientRect();
+      show(el, r.left + r.width / 2, r.top);
+    });
+    el.addEventListener('blur', function () { tip.hidden = true; });
+  });
+})();
