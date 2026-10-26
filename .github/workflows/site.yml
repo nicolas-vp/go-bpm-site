@@ -33,6 +33,7 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
+          cache: false # у сайта нет зависимостей
       - run: go vet ./...
       - run: go test ./...
       - name: build
@@ -43,8 +44,39 @@ jobs:
           path: dist
           retention-days: 7
 
+  # примеры страницы «Тестирование процессов»: код на странице должен компилироваться и проходить тесты,
+  # в том числе e2e на PostgreSQL
+  examples:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: orders_test
+        ports: ["5432:5432"]
+        options: --health-cmd pg_isready --health-interval 2s --health-retries 15
+    env:
+      GO_BPM_TEST_DSN: postgres://postgres:postgres@localhost:5432/orders_test?sslmode=disable
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: nicolas-vp/go-bpm
+          path: go-bpm
+      # examples/orders берёт go-bpm из ../go-bpm рядом с репозиторием сайта, как у разработчика
+      - run: ln -s "$GITHUB_WORKSPACE/go-bpm" ../go-bpm
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: examples/orders/go.mod
+          cache-dependency-path: examples/orders/go.sum
+      - name: generated code is up to date
+        working-directory: examples/orders
+        run: go generate ./... && git diff --exit-code
+      - run: make examples GO_BPM=../go-bpm
+
   deploy:
-    needs: build
+    needs: [build, examples]
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     concurrency:

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+    xmlns:zeebe="http://camunda.org/schema/zeebe/1.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    id="Definitions_order" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:process id="OrderApproval" name="Согласование заказа" isExecutable="true">
+    <bpmn:startEvent id="Start">
+      <bpmn:outgoing>Flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_1" sourceRef="Start" targetRef="CheckOrder" />
+    <bpmn:task id="CheckOrder" name="Проверить заказ">
+      <bpmn:incoming>Flow_1</bpmn:incoming>
+      <bpmn:outgoing>Flow_2</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_2" sourceRef="CheckOrder" targetRef="IsBig" />
+    <bpmn:exclusiveGateway id="IsBig" name="Крупный заказ?" default="Flow_small">
+      <bpmn:incoming>Flow_2</bpmn:incoming>
+      <bpmn:outgoing>Flow_big</bpmn:outgoing>
+      <bpmn:outgoing>Flow_small</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_big" name="да" sourceRef="IsBig" targetRef="Approve">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=amount &gt; 1000</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_small" name="нет" sourceRef="IsBig" targetRef="Notify" />
+    <bpmn:userTask id="Approve" name="Согласовать заказ">
+      <bpmn:extensionElements>
+        <zeebe:assignmentDefinition candidateGroups="managers" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_big</bpmn:incoming>
+      <bpmn:outgoing>Flow_3</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_3" sourceRef="Approve" targetRef="Notify" />
+    <bpmn:serviceTask id="Notify" name="Уведомить клиента">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="notifyClient" retries="3" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_small</bpmn:incoming>
+      <bpmn:incoming>Flow_3</bpmn:incoming>
+      <bpmn:outgoing>Flow_4</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_4" sourceRef="Notify" targetRef="End" />
+    <bpmn:endEvent id="End">
+      <bpmn:incoming>Flow_4</bpmn:incoming>
+    </bpmn:endEvent>
+  </bpmn:process>
+</bpmn:definitions>

@@ -1,6 +1,6 @@
 GO_BPM ?= ../go-bpm
 
-.PHONY: build serve test
+.PHONY: build serve test examples
 
 # собрать сайт в dist/ из документации соседнего репозитория go-bpm
 build:
@@ -14,3 +14,12 @@ serve: build
 test:
 	go vet ./...
 	go test ./...
+
+# тесты примеров страницы «Тестирование процессов»: e2e - только с GO_BPM_TEST_DSN (база очищается!)
+examples:
+	cd examples/orders && go vet ./... && go test ./...
+	# тест решения DMN подкладывается в пакет демо go-bpm без правок в его репозитории
+	mkdir -p dist
+	printf '{"Replace":{"%s/examples/demo/bpmgen/test_decision/decision_test.go":"%s/examples/demo/decision_test.go"}}' \
+		$(abspath $(GO_BPM)) $(CURDIR) > dist/overlay.json
+	cd $(GO_BPM) && go test -overlay $(CURDIR)/dist/overlay.json ./examples/demo/bpmgen/test_decision/

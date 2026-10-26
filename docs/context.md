@@ -56,6 +56,17 @@
   опрос экземпляра и истории, кнопки задач пользователей для `TestUserTask` (bob из managers, alice). Если в go-bpm
   поменяются процессы демо или API — проверить `templates/demo.html` и `static/demo.js`.
 - Тексты главной и демо написаны руками по README и docs go-bpm: не обещать неподдерживаемого.
+- Страница «Тестирование процессов» (`/docs/testing/`) пишется здесь, в `content/testing.md`: страницы с `site: true`
+  в списке `pages` (`cmd/build`) берутся из `content/`, остальные — из docs go-bpm. Код в ней не копируется руками:
+  блок ```` ```go file=<путь> decl=<имена> ```` сборщик заменяет объявлениями из файла (`cmd/build/include.go`,
+  через go/parser); путь `go-bpm/...` — от корня репозитория go-bpm.
+- Примеры страницы: `examples/orders` — отдельный модуль, процесс OrderApproval из «Быстрого старта», сгенерирован
+  настоящим go-bpm-gen (go-bpm — из `../../../go-bpm`, т. е. соседнего каталога), юнит-тесты метода, условия
+  и обработчика с заглушкой почты, e2e на PostgreSQL (`internal/e2e`, база из `GO_BPM_TEST_DSN`, таблицы
+  очищаются). `examples/demo/decision_test.go` — тест решения DMN демо go-bpm, подкладывается в его пакет через
+  `go test -overlay`, без правок в go-bpm (`go.mod` рядом — только чтобы `go vet ./...` сайта его не трогал).
+  `make examples` гоняет всё; job `examples` в CI — то же с PostgreSQL 18 и проверкой, что `go generate` не даёт
+  diff. Deploy ждёт и build, и examples: сломанный пример не выкатится.
 - Локально: `make build`, `make serve` (`cmd/serve` раздаёт `dist/` и проксирует `/api/`, `/ui/` в демо на
   `localhost:8080`, его можно пробросить `ssh -L`).
 
@@ -92,7 +103,8 @@
 
 ## Выкладка сайта
 
-- nginx: `/etc/nginx/conf.d/go-bpm.tech.conf` и `/etc/nginx/go-bpm-proxy.inc` — копии `deploy/` из репозитория,
+- nginx: `/etc/nginx/conf.d/go-bpm.tech.conf`, `/etc/nginx/go-bpm-proxy.inc`, `/etc/nginx/go-bpm-tls.inc` — копии
+  `deploy/` из репозитория,
   ставятся руками (`nginx -t && systemctl reload nginx`). Корень — `/var/www/go-bpm.tech/current`, симлинк на релиз
   в `releases/`.
 - Демо открыто посетителям с ограничениями: `/api/` — только GET/HEAD/POST, POST — 12 в минуту с IP (всплеск 10),
@@ -107,9 +119,13 @@
   переключает `current`, хранит 5 релизов и сверяет главную, которую отдаёт nginx.
 - Секреты репозитория go-bpm-site: `DEPLOY_HOST`, `DEPLOY_SSH_KEY` (ключ `go-bpm-site-ci` с
   `command="/opt/go-bpm-site/deploy.sh",restrict` в `/root/.ssh/authorized_keys`), `DEPLOY_KNOWN_HOSTS`.
-- HTTPS пока нет: 443 не слушается. Сертификат обещан регистратором домена; как получим файлы — добавить
-  `listen 443 ssl` и редирект с 80 в конфиг. Запасной вариант — Let's Encrypt, `/.well-known/acme-challenge/` уже
-  смотрит в `/var/www/acme`.
+- HTTPS — Let's Encrypt (certbot из пакетов Ubuntu, webroot `/var/www/acme`, сертификат
+  `/etc/letsencrypt/live/go-bpm.tech`, выпущен 2026-10-26, без email). Продлевает `certbot.timer`, после продления
+  nginx перечитывается хуком `/etc/letsencrypt/renewal-hooks/deploy/reload-nginx` (копия `deploy/reload-nginx`).
+  TLS-настройки — `/etc/nginx/go-bpm-tls.inc` (копия `deploy/go-bpm-tls.inc`). HTTP и `www.` — 301 на
+  `https://go-bpm.tech`, кроме `/.well-known/acme-challenge/`; включён HSTS на год. Сертификат от регистратора
+  домена ещё выпускается; когда придёт, можно заменить пути в `go-bpm-tls.inc` (и выключить продление certbot)
+  или остаться на Let's Encrypt.
 
 ## Окружение разработчика
 

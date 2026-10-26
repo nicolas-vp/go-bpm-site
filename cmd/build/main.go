@@ -24,23 +24,27 @@ import (
 	"github.com/nicolas-vp/go-bpm-site/internal/md"
 )
 
-// pages - страницы документации в порядке меню. README.md - обзор, /docs/.
+// pages - страницы документации в порядке меню. README.md - обзор, /docs/. Страницы с site: true пишутся
+// в этом репозитории (content/), остальные берутся из docs/ go-bpm.
 var pages = []struct {
 	file, slug, label string
+	site              bool
 }{
-	{"README.md", "", "Обзор"},
-	{"quickstart.md", "quickstart", "Быстрый старт"},
-	{"concepts.md", "concepts", "Принципы работы"},
-	{"bpmn.md", "bpmn", "Моделирование BPMN"},
-	{"dmn.md", "dmn", "Решения DMN"},
-	{"generator.md", "generator", "Генератор кода"},
-	{"examples.md", "examples", "Разбор примеров"},
-	{"running.md", "running", "Запуск и эксплуатация"},
-	{"api.md", "api", "HTTP API и консоль"},
+	{"README.md", "", "Обзор", false},
+	{"quickstart.md", "quickstart", "Быстрый старт", false},
+	{"concepts.md", "concepts", "Принципы работы", false},
+	{"bpmn.md", "bpmn", "Моделирование BPMN", false},
+	{"dmn.md", "dmn", "Решения DMN", false},
+	{"generator.md", "generator", "Генератор кода", false},
+	{"examples.md", "examples", "Разбор примеров", false},
+	{"running.md", "running", "Запуск и эксплуатация", false},
+	{"api.md", "api", "HTTP API и консоль", false},
+	{"testing.md", "testing", "Тестирование процессов", true},
 }
 
 type config struct {
 	docs, out, repo, ref, commit string
+	siteRepo                     string
 }
 
 func main() {
@@ -50,6 +54,7 @@ func main() {
 	flag.StringVar(&c.repo, "repo", "https://github.com/nicolas-vp/go-bpm", "репозиторий go-bpm для ссылок на код")
 	flag.StringVar(&c.ref, "ref", "main", "ветка go-bpm для ссылок на код")
 	flag.StringVar(&c.commit, "commit", "", "коммит go-bpm, из которого взята документация (для подвала)")
+	flag.StringVar(&c.siteRepo, "site-repo", "https://github.com/nicolas-vp/go-bpm-site", "репозиторий сайта для ссылок «править»")
 	flag.Parse()
 	if err := build(c); err != nil {
 		log.Fatal(err)
@@ -125,9 +130,18 @@ func build(c config) error {
 		links   []string            // внутренние ссылки для проверки
 	)
 	for i, p := range pages {
-		src, err := os.ReadFile(filepath.Join(c.docs, p.file))
+		srcFile, editURL := filepath.Join(c.docs, p.file), c.repo+"/edit/"+c.ref+"/docs/"+p.file
+		if p.site {
+			srcFile, editURL = filepath.Join("content", p.file), c.siteRepo+"/edit/main/content/"+p.file
+		}
+		src, err := os.ReadFile(srcFile)
 		if err != nil {
 			return err
+		}
+		if p.site {
+			if src, err = includeCode(src, filepath.Dir(filepath.Clean(c.docs))); err != nil {
+				return fmt.Errorf("%s: %w", srcFile, err)
+			}
 		}
 		url := pageURL(p.slug)
 		doc := md.Render(string(src), md.Options{Link: func(dest string, image bool) string {
@@ -157,7 +171,7 @@ func build(c config) error {
 			Content:  template.HTML(doc.HTML),
 			Headings: doc.Headings,
 			Nav:      pnav,
-			EditURL:  c.repo + "/edit/" + c.ref + "/docs/" + p.file,
+			EditURL:  editURL,
 		}
 		if i > 0 {
 			dp.Prev = &nav[i-1]

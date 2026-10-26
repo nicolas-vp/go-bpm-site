@@ -45,7 +45,7 @@ echo "deploy: выложен $release"
 ls -1d "$SITE"/releases/*/ | sort | head -n -$KEEP | xargs -r rm -rf
 
 # nginx отдаёт именно новый релиз: главная совпадает с файлом
-if ! curl -sf -H 'Host: go-bpm.tech' http://127.0.0.1/ | cmp -s - "$release/index.html"; then
+if ! curl -sf --resolve go-bpm.tech:443:127.0.0.1 https://go-bpm.tech/ | cmp -s - "$release/index.html"; then
 	echo "deploy: nginx не отдаёт новую главную" >&2
 	exit 1
 fi

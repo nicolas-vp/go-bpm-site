@@ -124,6 +124,9 @@ code, kbd, pre { font-family: var(--mono); font-size: 0.875em; }
 
 img { max-width: 100%; height: auto; }
 
+/* hidden сильнее любых display из классов: иначе скрытые картинки галереи и блоки демо остаются видны */
+[hidden] { display: none !important; }
+
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
 
 .skip { position: absolute; left: -9999px; }
@@ -475,6 +478,13 @@ img { max-width: 100%; height: auto; }
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
 }
+.split-code { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); align-items: start; }
+.section-title code { font-size: 0.85em; white-space: nowrap; line-height: 1; }
+.split-code .code { margin: 0; }
+.split-code .code pre { font-size: 13px; }
+.checks strong { color: var(--ink); }
+.eyebrow.center { text-align: center; }
+
 .shot { margin: 0; }
 .shot img {
   display: block;
@@ -920,8 +930,12 @@ img { max-width: 100%; height: auto; }
   .toc { display: none; }
 }
 
+@media (max-width: 1020px) {
+  .mainnav .nav-extra { display: none; }
+}
+
 @media (max-width: 960px) {
-  .hero-in, .split { grid-template-columns: minmax(0, 1fr); gap: 40px; }
+  .hero-in, .split, .split-code { grid-template-columns: minmax(0, 1fr); gap: 40px; }
   .features { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .demo-grid { grid-template-columns: minmax(0, 1fr); }
   .run { position: static; order: -1; }
@@ -956,7 +970,7 @@ img { max-width: 100%; height: auto; }
 @media (max-width: 720px) {
   .wrap, .topbar-in, .docs, .footer-in { padding-left: 16px; padding-right: 16px; }
   .topbar-in { gap: 10px; }
-  .mainnav a[href^="http"], .mainnav a[href="/ui/"] { display: none; }
+  .mainnav a[href^="http"], .mainnav a[href="/ui/"], .mainnav .nav-extra { display: none; }
   .mainnav a { padding: 6px 8px; }
   .search-open { min-width: 0; padding: 0; width: 36px; justify-content: center; }
   .search-open span, .search-open kbd { display: none; }

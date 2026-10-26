@@ -1,6 +1,6 @@
 # go-bpm-site
 
-Сайт [go-bpm](https://github.com/nicolas-vp/go-bpm) — <http://go-bpm.tech>: главная, документация из `docs/`
+Сайт [go-bpm](https://github.com/nicolas-vp/go-bpm) — <https://go-bpm.tech>: главная, документация из `docs/`
 репозитория go-bpm и живое демо.
 
 ```sh

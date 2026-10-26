@@ -1,0 +1,3 @@
+#!/bin/sh
+# certbot: перечитать nginx после продления сертификата. На сервере - /etc/letsencrypt/renewal-hooks/deploy/reload-nginx.
+nginx -t -q && systemctl reload nginx
