@@ -60,7 +60,7 @@
       var total = 0;
       (data.processes || []).forEach(function (p) {
         var c = p.instances || {};
-        var n = (c.running || 0) + (c.completed || 0) + (c.failed || 0);
+        var n = (c.running || 0) + (c.completed || 0) + (c.failed || 0) + (c.cancelled || 0);
         total += n;
         var card = $('[data-process="' + p.id + '"] [data-count]');
         if (!card) return;
@@ -68,6 +68,7 @@
         if (c.running) parts.push(c.running + ' в работе');
         if (c.completed) parts.push(c.completed + ' ' + plural(c.completed, 'завершён', 'завершено', 'завершено'));
         if (c.failed) parts.push(c.failed + ' ' + plural(c.failed, 'упал', 'упало', 'упало'));
+        if (c.cancelled) parts.push(c.cancelled + ' ' + plural(c.cancelled, 'отменён', 'отменено', 'отменено'));
         card.textContent = parts.join(' · ');
       });
       statusText.textContent = 'Демо работает · ' + total + ' ' + plural(total, 'экземпляр', 'экземпляра', 'экземпляров') + ' в базе';
@@ -115,7 +116,7 @@
     error: $('[data-run-error]'),
   };
 
-  var STATUS = { running: 'в работе', completed: 'завершён', failed: 'упал' };
+  var STATUS = { running: 'в работе', completed: 'завершён', failed: 'упал', cancelled: 'отменён' };
   var EVENT = { activated: 'ждёт', completed: 'пройден', terminated: 'прерван' };
   var TYPE = {
     startEvent: 'старт', endEvent: 'конец', task: 'метод', scriptTask: 'скрипт', serviceTask: 'service task',

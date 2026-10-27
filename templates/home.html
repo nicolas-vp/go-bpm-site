@@ -98,8 +98,8 @@
         </article>
         <article class="feature">
           <h3>Консоль из коробки</h3>
-          <p><code>/ui/</code>: процессы, запуск, поиск экземпляров, задачи пользователей и история экземпляра
-            поверх диаграммы bpmn-js со сработавшими правилами DMN.</p>
+          <p><code>/ui/</code>: процессы, запуск, поиск экземпляров, задачи пользователей, история экземпляра
+            поверх диаграммы bpmn-js со сработавшими правилами DMN, термокарта и динамика процесса.</p>
         </article>
       </div>
     </div>
@@ -203,6 +203,8 @@
           <li>Встроенные подпроцессы и call activity</li>
           <li>Экземпляры с бизнес-ключом и историей в базе</li>
           <li>HTTP API процессов, экземпляров и задач</li>
+          <li>Повтор упавших шагов и отмена экземпляров — из консоли и API</li>
+          <li>Термокарта и динамика процесса по истории</li>
         </ul>
         <p><a class="more" href="/docs/bpmn/#сводная-таблица">Все элементы и ограничения</a></p>
       </div>
@@ -244,14 +246,60 @@ q.<span class="tok-func">Start</span>(ctx)</code></pre></div>
           <button type="button" role="tab" aria-selected="false" data-tab="1">Правила DMN</button>
           <button type="button" role="tab" aria-selected="false" data-tab="2">Подпроцесс</button>
           <button type="button" role="tab" aria-selected="false" data-tab="3">Ошибка</button>
+          <button type="button" role="tab" aria-selected="false" data-tab="4">Упавший экземпляр</button>
         </div>
         <figure class="gallery-frame">
           <img src="/docs/images/history-user-task.png" alt="История TestUserTask: блок «Назначение» с двумя карточками задачи «Согласовать заявку»" loading="lazy" data-pane="0">
           <img src="/docs/images/history-rules.png" alt="Сработавшие правила DMN: подсвечена строка таблицы решения" loading="lazy" data-pane="1" hidden>
           <img src="/docs/images/history-call-activity.png" alt="История TestBpmProcess: ветка со скриптом, параллельные задачи и вызванный подпроцесс" loading="lazy" data-pane="2" hidden>
           <img src="/docs/images/history-error.png" alt="История TestTimerAndException: «это 2» прервана граничным событием ошибки, в панели — errorCode FAIL2" loading="lazy" data-pane="3" hidden>
+          <img src="/docs/images/history-failed.png" alt="Экземпляр, упавший на первом шаге: текст ошибки и кнопки «Повторить», «Исправить переменные…», «Отменить экземпляр»" loading="lazy" data-pane="4" hidden>
         </figure>
       </div>
+    </div>
+  </section>
+
+  <section class="section section-alt" id="operations">
+    <div class="wrap">
+      <p class="eyebrow center">Сопровождение</p>
+      <h2 class="section-title">Упавшее чинится без SQL, медленное видно на схеме</h2>
+      <p class="muted center">Всё это — в консоли <code>/ui/</code>, в HTTP API и в Go-методах: можно встроить
+        в свои инструменты.</p>
+      <div class="features">
+        <article class="feature">
+          <h3>Повтор упавшего шага</h3>
+          <p>В истории экземпляра — упавшие задачи его и дочерних экземпляров: элемент, попытки, текст ошибки.
+            «Повторить» возвращает задачу в очередь после выкладки исправления, экземпляр и родители снова
+            выполняются.</p>
+        </article>
+        <article class="feature">
+          <h3>Исправление переменных</h3>
+          <p>Если шаг упал на данных, переменные токена открываются JSON-ом: поправьте поле, и задача выполнится
+            с исправленными.</p>
+        </article>
+        <article class="feature">
+          <h3>Отмена экземпляра</h3>
+          <p>Корневой экземпляр отменяется вместе с дочерними: снимаются задачи очереди, таймеры и открытые задачи
+            пользователей, статус — <code>cancelled</code>.</p>
+        </article>
+        <article class="feature">
+          <h3>Термокарта</h3>
+          <p>Элементы схемы окрашены от бледного к красному по среднему, максимальному или суммарному времени либо
+            числу проходов — за выбранный период запуска экземпляров.</p>
+        </article>
+        <article class="feature">
+          <h3>Динамика</h3>
+          <p>Экземпляры по дням запуска и чем они закончились: завершены, выполняются, упали, отменены. Медиана
+            и p95 длительности завершённых.</p>
+        </article>
+        <article class="feature">
+          <h3>Для своих инструментов</h3>
+          <p><code>GET /instances/{id}/failures</code>, <code>POST /failures/{taskId}/retry</code>,
+            <code>POST /instances/{id}/cancel</code>, <code>/processes/{name}/heatmap</code> и
+            <code>/stats</code>; из Go — <code>engine.InstanceOperations</code>.</p>
+        </article>
+      </div>
+      <p class="center"><a class="more" href="/docs/api/#упавшие-задачи-и-отмена-экземпляров">Упавшие задачи и отмена в API</a></p>
     </div>
   </section>
 

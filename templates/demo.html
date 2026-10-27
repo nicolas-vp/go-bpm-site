@@ -59,10 +59,12 @@
         <img src="/docs/images/demo-bpm-process.svg" alt="TestBpmProcess: метод, service task, call activity, шлюз по amount, скрипт и параллельные ветки" loading="lazy">
         <p>Метод, service task, вызов процесса <code>testSubProcess</code>, exclusive gateway по
           <code>amount</code>. При <code>amount = 1</code> — ветка «нет»: скрипт и две параллельные ветки
-          со слиянием.</p>
+          со слиянием. Строка в <code>amount</code> роняет первый шаг: такой экземпляр можно починить
+          в истории — «Исправить переменные…» и повтор.</p>
         <div class="runs">
           <button class="btn" type="button" data-start='{"variables":{"amount":55}}'>amount = 55</button>
           <button class="btn" type="button" data-start='{"variables":{"amount":1}}'>amount = 1</button>
+          <button class="btn" type="button" data-start='{"variables":{"amount":"abc"}}'>amount = "abc"</button>
         </div>
         <a class="proc-more" href="/docs/examples/#testbpmprocess-шлюзы-скрипт-параллельные-ветки-call-activity">Как устроен процесс</a>
       </article>
@@ -131,7 +133,7 @@
         <p class="run-error" data-run-error hidden></p>
       </div>
       <p class="demo-note">Демо общее: экземпляры видны всем посетителям, завершённые удаляются через
-        несколько дней. Не вводите в переменные ничего личного.</p>
+        несколько дней. Повторить и отменить можно любой экземпляр, не только свой. Не вводите в переменные ничего личного.</p>
     </aside>
   </section>
 
@@ -145,6 +147,15 @@
         <a href="/ui/#/instances"><img src="/docs/images/console-instances.png" alt="Вкладка «Экземпляры»: фильтры, статусы, бизнес-ключи и ссылки на родителя" loading="lazy"><span>Поиск экземпляров</span></a>
         <a href="/ui/#/tasks"><img src="/docs/images/console-tasks.png" alt="Вкладка «Задачи»: мои задачи пользователя и очередь группы" loading="lazy"><span>Задачи пользователей</span></a>
       </div>
+      <ul class="console-more">
+        <li><a href="/ui/#/heatmap?process=TestTimerAndException"><strong>Термокарта</strong></a> — элементы схемы
+          окрашены по среднему, максимальному или суммарному времени либо числу проходов: видно, где процесс
+          проводит время.</li>
+        <li><a href="/ui/#/stats?process=TestBpmProcess&amp;days=30"><strong>Динамика</strong></a> — экземпляры по
+          дням запуска и чем они закончились, медиана и p95 длительности завершённых.</li>
+        <li><strong>Упавшие экземпляры</strong> — в истории над схемой: элемент, попытки, текст ошибки, кнопки
+          «Повторить», «Исправить переменные…» и «Отменить экземпляр».</li>
+      </ul>
       <p class="center"><a class="btn btn-primary" href="/ui/">Открыть консоль</a></p>
     </div>
   </section>

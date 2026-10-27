@@ -826,6 +826,7 @@ img { max-width: 100%; height: auto; }
 .badge.running { background: var(--warn-soft); color: var(--warn); }
 .badge.completed { background: var(--ok-soft); color: var(--ok); }
 .badge.failed { background: var(--bad-soft); color: var(--bad); }
+.badge.cancelled { background: var(--line); color: var(--ink-2); }
 
 .run-tasks {
   margin: 16px 0 0;
@@ -904,6 +905,8 @@ img { max-width: 100%; height: auto; }
   transition: transform 0.2s;
 }
 .console-shots a:hover img { transform: translateY(-3px); }
+.console-more { max-width: 760px; margin: 0 auto 28px; padding-left: 20px; color: var(--ink-2); }
+.console-more li { margin-bottom: 8px; }
 
 .notfound { max-width: 640px; margin: 0 auto; padding: 120px 24px; text-align: center; }
 .notfound h1 { font-size: 38px; margin: 0 0 12px; }
