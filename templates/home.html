@@ -239,7 +239,7 @@ q.<span class="tok-func">Start</span>(ctx)</code></pre></div>
   <section class="section">
     <div class="wrap">
       <h2 class="section-title">История экземпляра на схеме</h2>
-      <p class="muted center">Где прошёл токен, какие переменные были у каждой задачи, какое правило DMN сработало.</p>
+      <p class="muted center">Где прошёл токен, какие переменные были у каждой задачи, какое правило DMN сработало, а по всем экземплярам — где процесс проводит время.</p>
       <div class="gallery" data-gallery>
         <div class="gallery-tabs" role="tablist">
           <button type="button" role="tab" aria-selected="true" data-tab="0">Задачи пользователей</button>
@@ -247,6 +247,7 @@ q.<span class="tok-func">Start</span>(ctx)</code></pre></div>
           <button type="button" role="tab" aria-selected="false" data-tab="2">Подпроцесс</button>
           <button type="button" role="tab" aria-selected="false" data-tab="3">Ошибка</button>
           <button type="button" role="tab" aria-selected="false" data-tab="4">Упавший экземпляр</button>
+          <button type="button" role="tab" aria-selected="false" data-tab="5">Термокарта</button>
         </div>
         <figure class="gallery-frame">
           <img src="/docs/images/history-user-task.png" alt="История TestUserTask: блок «Назначение» с двумя карточками задачи «Согласовать заявку»" loading="lazy" data-pane="0">
@@ -254,6 +255,7 @@ q.<span class="tok-func">Start</span>(ctx)</code></pre></div>
           <img src="/docs/images/history-call-activity.png" alt="История TestBpmProcess: ветка со скриптом, параллельные задачи и вызванный подпроцесс" loading="lazy" data-pane="2" hidden>
           <img src="/docs/images/history-error.png" alt="История TestTimerAndException: «это 2» прервана граничным событием ошибки, в панели — errorCode FAIL2" loading="lazy" data-pane="3" hidden>
           <img src="/docs/images/history-failed.png" alt="Экземпляр, упавший на первом шаге: текст ошибки и кнопки «Повторить», «Исправить переменные…», «Отменить экземпляр»" loading="lazy" data-pane="4" hidden>
+          <img src="/static/images/heatmap.png" alt="Термокарта TestBpmProcess по восьми экземплярам: вызов подпроцесса окрашен в красный — 148 мс в среднем, остальные элементы — единицы миллисекунд" loading="lazy" data-pane="5" hidden>
         </figure>
       </div>
     </div>
