@@ -101,3 +101,17 @@ jobs:
         env:
           DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
         run: tar -czf - -C dist . | ssh -o BatchMode=yes "root@$DEPLOY_HOST" "${GITHUB_SHA::7}"
+      # IndexNow: сообщить Bing и Яндексу, что страницы обновились. Не при ежедневной сборке по расписанию:
+      # она обычно ничего не меняет. Ключ - файл /<ключ>.txt на сайте (cmd/build, indexNowKey).
+      - name: indexnow
+        if: github.event_name != 'schedule'
+        run: |
+          key=$(ls dist | grep -E '^[0-9a-f]{32}\.txt$' | sed 's/\.txt$//')
+          urls=$(grep -o '<loc>[^<]*' dist/sitemap.xml | sed 's/<loc>//' | jq -R . | jq -sc .)
+          body=$(jq -nc --arg key "$key" --argjson urls "$urls" \
+            '{host: "go-bpm.tech", key: $key, keyLocation: "https://go-bpm.tech/\($key).txt", urlList: $urls}')
+          for api in https://api.indexnow.org/indexnow https://yandex.com/indexnow; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/json; charset=utf-8' \
+              -d "$body" "$api") || true
+            echo "$api: $code"
+          done

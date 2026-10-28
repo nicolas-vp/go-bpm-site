@@ -59,7 +59,7 @@
         <img src="/docs/images/demo-bpm-process.svg" alt="TestBpmProcess: метод, service task, call activity, шлюз по amount, скрипт и параллельные ветки" loading="lazy">
         <p>Метод, service task, вызов процесса <code>testSubProcess</code>, exclusive gateway по
           <code>amount</code>. При <code>amount = 1</code> — ветка «нет»: скрипт и две параллельные ветки
-          со слиянием. Строка в <code>amount</code> роняет первый шаг: такой экземпляр можно починить
+          со слиянием. Строка в <code>amount</code> роняет первый шаг: после 10 попыток (несколько минут) экземпляр упадёт, и его можно починить
           в истории — «Исправить переменные…» и повтор.</p>
         <div class="runs">
           <button class="btn" type="button" data-start='{"variables":{"amount":55}}'>amount = 55</button>

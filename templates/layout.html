@@ -3,11 +3,32 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{{if eq .Section "home"}}go-bpm — {{.Title}}{{else}}{{.Title}} · go-bpm{{end}}</title>
+{{- $title := printf "%s · go-bpm" .Title}}
+{{- if eq .Section "home"}}{{$title = printf "go-bpm — %s" .Title}}
+{{- else if not .Path}}
+{{- else if contains .Title "go-bpm"}}{{$title = printf "%s — BPMN-движок для Go" .Title}}
+{{- else}}{{$title = printf "%s · go-bpm, BPMN-движок для Go" .Title}}{{end}}
+<title>{{$title}}</title>
 {{with .Description}}<meta name="description" content="{{.}}">{{end}}
-<meta property="og:title" content="{{.Title}} · go-bpm">
+{{- if .Path}}
+<link rel="canonical" href="{{.SiteURL}}{{.Path}}">
+<meta property="og:url" content="{{.SiteURL}}{{.Path}}">
+{{- else}}
+<meta name="robots" content="noindex">
+{{- end}}
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="go-bpm">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:title" content="{{$title}}">
 {{with .Description}}<meta property="og:description" content="{{.}}">{{end}}
+<meta property="og:image" content="{{.SiteURL}}/static/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+{{with .JSONLD}}<script type="application/ld+json">{{.}}</script>{{end}}
+<link rel="icon" href="/favicon.ico" sizes="32x32">
 <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/static/style.css">
 <script>try{var t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <script src="/static/site.js" defer></script>

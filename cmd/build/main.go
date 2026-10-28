@@ -26,27 +26,46 @@ import (
 
 // pages - страницы документации в порядке меню. README.md - обзор, /docs/. Страницы с site: true пишутся
 // в этом репозитории (content/), остальные берутся из docs/ go-bpm.
+//
+// desc - описание для поисковиков (meta description, до 160 знаков). Пустое - берётся первый абзац страницы.
 var pages = []struct {
 	file, slug, label string
 	site              bool
+	desc              string
 }{
-	{"README.md", "", "Обзор", false},
-	{"quickstart.md", "quickstart", "Быстрый старт", false},
-	{"concepts.md", "concepts", "Принципы работы", false},
-	{"bpmn.md", "bpmn", "Моделирование BPMN", false},
-	{"dmn.md", "dmn", "Решения DMN", false},
-	{"generator.md", "generator", "Генератор кода", false},
-	{"examples.md", "examples", "Разбор примеров", false},
-	{"running.md", "running", "Запуск и эксплуатация", false},
-	{"api.md", "api", "HTTP API и консоль", false},
-	{"testing.md", "testing", "Тестирование процессов", true},
-	{"performance.md", "performance", "Насколько быстрый go-bpm", true},
-	{"about.md", "about", "О нас", true},
+	{"README.md", "", "Обзор", false,
+		"Документация go-bpm — BPMN-движка для Go на PostgreSQL: процессы в BPMN, правила в DMN, генерация Go-кода, API, консоль, эксплуатация."},
+	{"quickstart.md", "quickstart", "Быстрый старт", false,
+		"Демо go-bpm за пять минут и свой сервис с нуля: процесс в Camunda Modeler, генерация Go-кода, движок на PostgreSQL."},
+	{"concepts.md", "concepts", "Принципы работы", false,
+		"Как go-bpm исполняет BPMN и DMN: токен, шаги и транзакции, очередь задач в PostgreSQL, повторы и переменные процесса."},
+	{"bpmn.md", "bpmn", "Моделирование BPMN", false,
+		"Какие элементы BPMN поддерживает go-bpm и как их настроить в Camunda Modeler: задачи, шлюзы, таймеры, подпроцессы, ограничения."},
+	{"dmn.md", "dmn", "Решения DMN", false,
+		"Таблицы решений DMN в go-bpm компилируются в Go-функции: ячейки, hit policy, история сработавших правил в PostgreSQL."},
+	{"generator.md", "generator", "Генератор кода", false,
+		"go-bpm-gen превращает BPMN и DMN в типизированный Go-код: запуск, раскладка пакетов, модель данных, методы и обработчики."},
+	{"examples.md", "examples", "Разбор примеров", false,
+		"Разбор процессов демо go-bpm: задачи пользователей, решения DMN, call activity, параллельные service task, таймеры и ошибки."},
+	{"running.md", "running", "Запуск и эксплуатация", false,
+		"Эксплуатация go-bpm: настройки движка, таблицы в PostgreSQL, масштабирование, мониторинг, повтор и отмена упавших экземпляров."},
+	{"api.md", "api", "HTTP API и консоль", false,
+		"HTTP API go-bpm и веб-консоль /ui/: процессы, экземпляры, задачи пользователей, упавшие задачи, термокарта и динамика."},
+	{"testing.md", "testing", "Тестирование процессов", true,
+		"Как тестировать процессы go-bpm обычным go test: юнит-тесты методов, условий и решений DMN, e2e на настоящем PostgreSQL."},
+	{"performance.md", "performance", "Насколько быстрый go-bpm", true,
+		"Нагрузочный тест go-bpm по методике статьи о Camunda и Zeebe: экземпляры в секунду с историей в PostgreSQL и без, на той же машине."},
+	{"about.md", "about", "О нас", true,
+		"Кто разрабатывает go-bpm — BPMN-движок для Go на PostgreSQL — и как с нами связаться."},
 }
+
+// indexNowKey - ключ IndexNow: файл /<ключ>.txt подтверждает, что уведомления о новых страницах шлёт владелец сайта.
+// Ключ не секрет, он и так лежит на сайте.
+const indexNowKey = "5f3c9a2e8b7d4e1fa06c2b9d8e7f1a34"
 
 type config struct {
 	docs, out, repo, ref, commit string
-	siteRepo                     string
+	siteRepo, siteURL            string
 	benchResults                 string
 }
 
@@ -58,6 +77,7 @@ func main() {
 	flag.StringVar(&c.ref, "ref", "main", "ветка go-bpm для ссылок на код")
 	flag.StringVar(&c.commit, "commit", "", "коммит go-bpm, из которого взята документация (для подвала)")
 	flag.StringVar(&c.benchResults, "bench-results", "bench/results", "результаты нагрузочного теста для страницы производительности")
+	flag.StringVar(&c.siteURL, "site-url", "https://go-bpm.tech", "адрес сайта для canonical, Open Graph и sitemap")
 	flag.StringVar(&c.siteRepo, "site-repo", "https://github.com/nicolas-vp/go-bpm-site", "репозиторий сайта для ссылок «править»")
 	flag.Parse()
 	if err := build(c); err != nil {
@@ -87,6 +107,9 @@ type layout struct {
 	Title       string
 	Description string
 	Section     string // home, docs, demo - подсветка в шапке
+	SiteURL     string
+	Path        string // адрес страницы от корня, для canonical; пустой - страницы нет в поиске (404)
+	JSONLD      template.JS
 	Repo        string
 	Commit      string
 	CommitURL   string
@@ -104,7 +127,8 @@ type searchEntry struct {
 
 func build(c config) error {
 	tpl, err := template.New("").Funcs(template.FuncMap{
-		"indent": func(level int) bool { return level > 2 },
+		"indent":   func(level int) bool { return level > 2 },
+		"contains": strings.Contains,
 	}).ParseFS(site.Templates, "templates/*.html")
 	if err != nil {
 		return err
@@ -112,7 +136,8 @@ func build(c config) error {
 	if err := os.RemoveAll(c.out); err != nil {
 		return err
 	}
-	base := layout{Repo: c.repo, Year: time.Now().Year()}
+	base := layout{Repo: c.repo, Year: time.Now().Year(), SiteURL: c.siteURL}
+	var sitemap []string
 	if c.commit != "" {
 		base.Commit = c.commit[:min(7, len(c.commit))]
 		base.CommitURL = c.repo + "/commit/" + c.commit
@@ -193,8 +218,12 @@ func build(c config) error {
 			dp.Next = &nav[i+1]
 		}
 		l := base
-		l.Title, l.Section, l.Page = doc.Title, "docs", dp
-		l.Description = description(string(src))
+		l.Title, l.Section, l.Page, l.Path = doc.Title, "docs", dp, url
+		l.Description = p.desc
+		if l.Description == "" {
+			l.Description = description(string(src))
+		}
+		sitemap = append(sitemap, url)
 		if err := render(tpl, "doc.html", l, filepath.Join(c.out, url, "index.html")); err != nil {
 			return err
 		}
@@ -208,20 +237,29 @@ func build(c config) error {
 	}
 
 	home := base
-	home.Title, home.Section = "BPM-движок на PostgreSQL для Go-сервисов", "home"
-	home.Description = "go-bpm: процессы в BPMN и DMN, генератор типизированного Go-кода и движок на очереди задач в PostgreSQL."
+	home.Title, home.Section, home.Path = "BPMN-движок для Go на PostgreSQL", "home", "/"
+	home.Description = "go-bpm — открытый BPMN-движок для Go: схемы BPMN и таблицы DMN превращаются в типизированный Go-код " +
+		"и исполняются на очереди задач в PostgreSQL."
+	if home.JSONLD, err = softwareLD(c, home.Description); err != nil {
+		return err
+	}
 	if err := render(tpl, "home.html", home, filepath.Join(c.out, "index.html")); err != nil {
 		return err
 	}
 	demo := base
-	demo.Title, demo.Section = "Живое демо", "demo"
-	demo.Description = "Запустите процессы демо go-bpm и посмотрите их историю на схеме."
+	demo.Title, demo.Section, demo.Path = "Живое демо", "demo", "/demo/"
+	demo.Description = "Живое демо go-bpm: запустите процесс BPMN, согласуйте заявку, посмотрите историю на схеме, уроните " +
+		"экземпляр и почините его из консоли."
 	if err := render(tpl, "demo.html", demo, filepath.Join(c.out, "demo", "index.html")); err != nil {
 		return err
 	}
 	notFound := base
 	notFound.Title = "Страница не найдена"
 	if err := render(tpl, "404.html", notFound, filepath.Join(c.out, "404.html")); err != nil {
+		return err
+	}
+
+	if err := writeSEO(c, append([]string{"/", "/demo/"}, sitemap...)); err != nil {
 		return err
 	}
 
@@ -330,10 +368,7 @@ func description(src string) string {
 		t = strings.Join(strings.Fields(t), " ")
 		t = regexp.MustCompile(`\[([^\]]*)\]\([^)]*\)`).ReplaceAllString(t, "$1")
 		t = strings.NewReplacer("`", "", "**", "").Replace(t)
-		if r := []rune(t); len(r) > 200 {
-			t = string(r[:200]) + "…"
-		}
-		return t
+		return shorten(t, 160)
 	}
 	return ""
 }
@@ -386,4 +421,74 @@ func copyDir(src, dst string) error {
 		rel, _ := filepath.Rel(src, p)
 		return write(filepath.Join(dst, rel), data)
 	})
+}
+
+// shorten обрезает описание до max знаков: по концу предложения, если оно не слишком короткое, иначе по слову.
+func shorten(t string, max int) string {
+	r := []rune(t)
+	if len(r) <= max {
+		return t
+	}
+	cut := string(r[:max])
+	if i := strings.LastIndexAny(cut, ".!?"); i >= max/2 {
+		return cut[:i+1]
+	}
+	if i := strings.LastIndex(cut, " "); i > 0 {
+		cut = cut[:i]
+	}
+	return strings.TrimRight(cut, ",;:—- ") + "…"
+}
+
+// softwareLD - разметка schema.org для главной: поисковики видят, что это открытая библиотека на Go.
+func softwareLD(c config, desc string) (template.JS, error) {
+	data, err := json.Marshal(map[string]any{
+		"@context":            "https://schema.org",
+		"@type":               "SoftwareSourceCode",
+		"name":                "go-bpm",
+		"description":         desc,
+		"url":                 c.siteURL + "/",
+		"codeRepository":      c.repo,
+		"programmingLanguage": "Go",
+		"license":             "https://www.apache.org/licenses/LICENSE-2.0",
+		"keywords":            "BPMN, DMN, Go, Golang, PostgreSQL, workflow engine, BPM, Camunda",
+		"author": []map[string]string{
+			{"@type": "Person", "name": "Николай Первухин"},
+			{"@type": "Person", "name": "Сергей Потехин"},
+		},
+	})
+	return template.JS(data), err
+}
+
+// writeSEO пишет файлы для поисковиков: robots.txt, sitemap.xml, ключ IndexNow и иконки в корне сайта.
+func writeSEO(c config, paths []string) error {
+	robots := "User-agent: *\n" +
+		"Disallow: /api/\n" +
+		"Disallow: /search.json\n\n" +
+		"Sitemap: " + c.siteURL + "/sitemap.xml\n"
+	if err := write(filepath.Join(c.out, "robots.txt"), []byte(robots)); err != nil {
+		return err
+	}
+	var b strings.Builder
+	b.WriteString(`<?xml version="1.0" encoding="UTF-8"?>` + "\n")
+	b.WriteString(`<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">` + "\n")
+	for _, p := range paths {
+		fmt.Fprintf(&b, "  <url><loc>%s</loc></url>\n", c.siteURL+p)
+	}
+	b.WriteString("</urlset>\n")
+	if err := write(filepath.Join(c.out, "sitemap.xml"), []byte(b.String())); err != nil {
+		return err
+	}
+	if err := write(filepath.Join(c.out, indexNowKey+".txt"), []byte(indexNowKey)); err != nil {
+		return err
+	}
+	for _, f := range []string{"favicon.ico", "apple-touch-icon.png"} {
+		data, err := fs.ReadFile(site.Static, "static/"+f)
+		if err != nil {
+			return err
+		}
+		if err := write(filepath.Join(c.out, f), data); err != nil {
+			return err
+		}
+	}
+	return nil
 }
