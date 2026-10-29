@@ -55,6 +55,8 @@ var pages = []struct {
 		"Как тестировать процессы go-bpm обычным go test: юнит-тесты методов, условий и решений DMN, e2e на настоящем PostgreSQL."},
 	{"performance.md", "performance", "Насколько быстрый go-bpm", true,
 		"Нагрузочный тест go-bpm по методике статьи о Camunda и Zeebe: экземпляры в секунду с историей в PostgreSQL и без, на той же машине."},
+	{"roadmap.md", "roadmap", "Дорожная карта", true,
+		"Дорожная карта go-bpm: документация, метрики и авторизация, сообщения BPMN, multi-instance и компенсации — от простого к сложному."},
 	{"about.md", "about", "О нас", true,
 		"Кто разрабатывает go-bpm — BPMN-движок для Go на PostgreSQL — и как с нами связаться."},
 }
