@@ -194,6 +194,15 @@ func build(c config) error {
 				return fmt.Errorf("%s: %w", p.file, err)
 			}
 		}
+		if p.file == "roadmap.md" {
+			roadmap, err := loadRoadmap(filepath.Join("content", "roadmap.json"))
+			if err != nil {
+				return err
+			}
+			if doc.HTML, err = roadmap.render(doc.HTML, doc.Headings); err != nil {
+				return fmt.Errorf("%s: %w", p.file, err)
+			}
+		}
 		anchors[url] = true
 		for _, h := range doc.Headings {
 			anchors[url+"#"+h.ID] = true

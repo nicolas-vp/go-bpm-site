@@ -1088,3 +1088,113 @@ img { max-width: 100%; height: auto; }
   .perf-name { padding: 0 0 2px; font-size: 13px; }
   .perf-track { height: 22px; }
 }
+
+/* Дорожная карта: цвет - сложность задачи от быстро (1) до долго (5), из токенов темы */
+:root {
+  --rm-1: var(--ok);
+  --rm-2: color-mix(in oklch, var(--ok) 50%, var(--token));
+  --rm-3: var(--token);
+  --rm-4: color-mix(in oklch, var(--token) 50%, var(--bad));
+  --rm-5: var(--bad);
+}
+.rm-l1 { --rm: var(--rm-1); }
+.rm-l2 { --rm: var(--rm-2); }
+.rm-l3 { --rm: var(--rm-3); }
+.rm-l4 { --rm: var(--rm-4); }
+.rm-l5 { --rm: var(--rm-5); }
+
+.rm-overview { margin: 26px 0 28px; }
+.prose .rm-stages {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+.prose .rm-stages li { position: relative; margin: 0; }
+.rm-stages li + li::before {
+  content: "";
+  position: absolute;
+  left: -12px;
+  top: 37px;
+  width: 12px;
+  border-top: 2px dashed var(--line-2);
+}
+.prose .rm-stage {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  height: 100%;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  text-decoration: none;
+  transition: border-color .15s, box-shadow .15s, transform .15s;
+}
+.prose .rm-stage:hover { border-color: var(--accent); box-shadow: var(--shadow); transform: translateY(-1px); }
+.rm-stage-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  margin-bottom: 6px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.rm-stage-icon svg { width: 22px; height: 22px; }
+.rm-stage-num { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
+.rm-stage-name { font-weight: 650; line-height: 1.3; }
+.rm-dots { display: flex; gap: 4px; margin-top: auto; padding-top: 10px; }
+.rm-dots i, .rm-scale-bar i { display: block; background: var(--rm); }
+.rm-dots i { width: 12px; height: 12px; border-radius: 3px; }
+
+.rm-scale { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 12px; margin-top: 14px; font-size: 13px; color: var(--ink-3); }
+.rm-scale-bar { display: flex; gap: 3px; }
+.rm-scale-bar i { width: 34px; height: 8px; border-radius: 4px; }
+.rm-scale-ends { display: flex; gap: 8px; }
+.rm-scale-ends span + span::before { content: "→ "; }
+
+.rm-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+  margin: 18px 0 8px;
+}
+.rm-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 16px 18px;
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--rm);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.rm-card-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.rm-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--rm) 14%, transparent);
+  color: var(--rm);
+}
+.rm-icon svg, .rm-stage-icon svg { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.rm-icon svg { width: 21px; height: 21px; }
+.rm-meter { display: flex; gap: 3px; }
+.rm-meter i { display: block; width: 7px; height: 14px; border-radius: 2px; background: var(--line); }
+.rm-meter i.on { background: var(--rm); }
+.prose .rm-title { margin: 2px 0 0; font-size: 16px; line-height: 1.3; }
+.prose .rm-text { margin: 0; font-size: 14px; line-height: 1.5; color: var(--ink-2); }
+.rm-text code { font-size: 0.86em; }
+
+@media (max-width: 860px) {
+  .prose .rm-stages { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .rm-stages li:nth-child(odd)::before { display: none; }
+  .prose .rm-stage { padding: 14px; }
+}
