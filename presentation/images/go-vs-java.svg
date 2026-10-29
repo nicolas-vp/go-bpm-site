@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 330" width="960" height="330" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#6b7680"/>
+    </marker>
+  </defs>
+  <rect width="960" height="330" fill="#ffffff"/>
+
+  <!-- Привычная схема: Java-движок рядом с Go-сервисом -->
+  <text x="20" y="30" font-size="16" font-weight="700" fill="#15212b">Обычно: Java-движок рядом с Go-сервисом</text>
+  <rect x="20" y="48" width="170" height="168" rx="12" fill="#f2f3ef" stroke="#cfd3cb" stroke-width="2"/>
+  <text x="105" y="76" text-anchor="middle" font-size="14" font-weight="600" fill="#15212b">Go-сервис</text>
+  <rect x="36" y="92" width="138" height="30" rx="6" fill="#fff" stroke="#cfd3cb"/>
+  <text x="105" y="112" text-anchor="middle" font-size="12" fill="#44515c">бизнес-логика</text>
+  <rect x="36" y="130" width="138" height="30" rx="6" fill="#fff" stroke="#cfd3cb"/>
+  <text x="105" y="150" text-anchor="middle" font-size="12" fill="#44515c">клиент REST / gRPC</text>
+  <rect x="36" y="168" width="138" height="30" rx="6" fill="#fff" stroke="#cfd3cb"/>
+  <text x="105" y="188" text-anchor="middle" font-size="12" fill="#44515c">опрос задач, ретраи</text>
+
+  <path d="M194 132h52" stroke="#6b7680" stroke-width="2" marker-start="url(#a)" marker-end="url(#a)"/>
+  <text x="220" y="122" text-anchor="middle" font-size="11" fill="#6b7680">сеть</text>
+
+  <rect x="250" y="48" width="200" height="168" rx="12" fill="#f2f3ef" stroke="#cfd3cb" stroke-width="2"/>
+  <text x="350" y="76" text-anchor="middle" font-size="14" font-weight="600" fill="#15212b">BPM-движок</text>
+  <rect x="266" y="92" width="168" height="30" rx="6" fill="#fff" stroke="#cfd3cb"/>
+  <text x="350" y="112" text-anchor="middle" font-size="12" fill="#44515c">движок + интерпретатор</text>
+  <rect x="266" y="130" width="168" height="30" rx="6" fill="#fff" stroke="#cfd3cb"/>
+  <text x="350" y="150" text-anchor="middle" font-size="12" fill="#44515c">Spring Boot</text>
+  <rect x="266" y="168" width="168" height="30" rx="6" fill="#fff" stroke="#cfd3cb"/>
+  <text x="350" y="188" text-anchor="middle" font-size="12" fill="#44515c">JVM: heap, GC, прогрев</text>
+
+  <path d="M350 218v22" stroke="#6b7680" stroke-width="2" marker-end="url(#a)"/>
+  <rect x="250" y="244" width="200" height="36" rx="8" fill="#fff" stroke="#cfd3cb" stroke-width="2"/>
+  <text x="350" y="267" text-anchor="middle" font-size="12" fill="#44515c">своя БД (+ Elasticsearch)</text>
+  <text x="20" y="252" font-size="12" fill="#6b7680">две команды компетенций,</text>
+  <text x="20" y="270" font-size="12" fill="#6b7680">два деплоя, два мониторинга,</text>
+  <text x="20" y="288" font-size="12" fill="#6b7680">сетевой вызов на каждом шаге</text>
+
+  <line x1="490" y1="40" x2="490" y2="300" stroke="#e1e3dd" stroke-width="2"/>
+
+  <!-- go-bpm: один бинарник -->
+  <text x="530" y="30" font-size="16" font-weight="700" fill="#0b7896">go-bpm: всё в одном Go-бинарнике</text>
+  <rect x="530" y="48" width="230" height="168" rx="12" fill="#e2f2f6" stroke="#0b7896" stroke-width="2"/>
+  <text x="645" y="76" text-anchor="middle" font-size="14" font-weight="600" fill="#0b7896">Go-сервис</text>
+  <rect x="546" y="92" width="198" height="30" rx="6" fill="#fff" stroke="#0b7896"/>
+  <text x="645" y="112" text-anchor="middle" font-size="12" fill="#15212b">бизнес-логика</text>
+  <rect x="546" y="130" width="198" height="30" rx="6" fill="#fff" stroke="#0b7896"/>
+  <text x="645" y="150" text-anchor="middle" font-size="12" fill="#15212b">сгенерированные процессы</text>
+  <rect x="546" y="168" width="198" height="30" rx="6" fill="#0b7896"/>
+  <text x="645" y="188" text-anchor="middle" font-size="12" font-weight="600" fill="#fff">движок go-bpm — библиотека</text>
+
+  <path d="M645 218v22" stroke="#6b7680" stroke-width="2" marker-end="url(#a)"/>
+  <rect x="545" y="244" width="200" height="36" rx="8" fill="#fbefd9" stroke="#e0912f" stroke-width="2"/>
+  <text x="645" y="267" text-anchor="middle" font-size="12" fill="#a8650b">PostgreSQL сервиса</text>
+
+  <!-- цифры демо -->
+  <text x="790" y="72" font-size="13" font-weight="700" fill="#15212b">Демо go-bpm</text>
+  <text x="790" y="90" font-size="11" fill="#6b7680">на сервере с 1 ГБ памяти</text>
+  <text x="790" y="128" font-size="26" font-weight="700" fill="#0b7896">14 МБ</text>
+  <text x="790" y="146" font-size="12" fill="#44515c">памяти у сервиса</text>
+  <text x="790" y="184" font-size="26" font-weight="700" fill="#0b7896">23 МБ</text>
+  <text x="790" y="202" font-size="12" fill="#44515c">образ Docker</text>
+  <text x="790" y="240" font-size="26" font-weight="700" fill="#0b7896">0,3 с</text>
+  <text x="790" y="258" font-size="12" fill="#44515c">старт с миграциями</text>
+
+  <text x="480" y="318" text-anchor="middle" font-size="13" fill="#6b7680">Вызов шага процесса — это вызов Go-функции, а не запрос по сети к другому сервису.</text>
+</svg>
