@@ -9,7 +9,7 @@ make serve    # http://localhost:8000, /api/ и /ui/ - в демо на localhos
 make test
 ```
 
-Демо с сервера для `make serve`: `ssh -L 8080:127.0.0.1:8080 root@5.180.47.109`.
+Демо с сервера для `make serve`: `ssh -L 8080:127.0.0.1:8080 root@213.239.158.215`.
 
 | Каталог | Что там |
 |---|---|

@@ -7,7 +7,7 @@ build:
 	go run ./cmd/build -docs $(GO_BPM)/docs -out dist -commit $$(git -C $(GO_BPM) rev-parse HEAD)
 
 # посмотреть локально: /api/ и /ui/ уходят в демо на localhost:8080
-# (ssh -L 8080:127.0.0.1:8080 root@5.180.47.109 - демо с сервера)
+# (ssh -L 8080:127.0.0.1:8080 root@213.239.158.215 - демо с сервера)
 serve: build
 	go run ./cmd/serve -dir dist
 

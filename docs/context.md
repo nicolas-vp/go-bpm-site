@@ -83,16 +83,18 @@
 
 ## Сервер
 
-- `root@5.180.47.109`, SSH по ключу без пароля (ключ разработчика уже прописан). Ubuntu 24.04, amd64,
-  1 ГБ памяти (свободно ~500 МБ), диск 25 ГБ (свободно ~16 ГБ).
+- `root@213.239.158.215` (fornex, `380499.fornex.cloud`), SSH по ключу без пароля (ключ разработчика уже прописан).
+  Ubuntu 24.04, amd64, 1 ГБ памяти без swap (свободно ~500 МБ), диск 10 ГБ (свободно ~6 ГБ). Ключ хоста:
+  `213.239.158.215 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB7TScu9N5w7kLpFZb6+2pYxIGUwspClzlNkqgd2rPzv`.
+- 2026-10-29 переехали сюда со старого сервера `5.180.47.109` (там был ispmanager, который управлял nginx):
+  перенесены сертификат с аккаунтом Let's Encrypt (`/etc/letsencrypt` целиком), релизы сайта, скрипты, cron и база
+  демо (`pg_dump`/`pg_restore`). Панели здесь нет.
 - Docker 29 из пакетов Ubuntu (`docker.io`) и плагин `docker-compose-v2`; buildx не установлен.
-- Установлен ispmanager: он управляет nginx (1.30, порт 80; 443 пока не слушается). Виртуальные хосты
-  ispmanager кладёт в `/etc/nginx/vhosts/<пользователь>/*.conf` (сейчас каталога нет — сайтов не заведено),
-  общие вставки — `/etc/nginx/vhosts-includes/` (там `letsencrypt.conf`). Править nginx в обход ispmanager —
-  риск, что панель перезапишет конфиг; сайт лучше заводить через панель или класть конфиг в `conf.d`.
-  Панель — `https://5.180.47.109:1500`.
-- Занято: 22 sshd, 80 и `5.180.47.109:1501` nginx, 1500 ihttpd (ispmanager), 21 proftpd, 53 named,
-  3306/33060 MySQL (localhost), 3128 squid в контейнере `my-private-proxy` (localhost), 8080 — демо go-bpm (localhost).
+- nginx 1.30 — из репозитория nginx.org (`/etc/apt/sources.list.d/nginx.list`, приоритет в
+  `/etc/apt/preferences.d/99nginx`): у nginx 1.24 из Ubuntu нет директивы `http2 on;`. Его `conf.d/default.conf`
+  отключён (`default.conf.disabled`).
+- Занято: 22 sshd, 80 и 443 nginx, 3128 squid в контейнере `my-private-proxy` (localhost),
+  8080 — демо go-bpm (localhost). Файрвола нет (ufw выключен).
 - Демо go-bpm: `/opt/go-bpm` (`compose.yaml`, `.env` с паролем базы — только на сервере, `deploy.sh`),
   контейнеры `go-bpm-go-bpm-1` (`ghcr.io/nicolas-vp/go-bpm`, `127.0.0.1:8080`) и `go-bpm-postgres-1`
   (`postgres:18`, том `go-bpm_pgdata`). Консоль и API без авторизации — наружу только через прокси с ней.
@@ -109,7 +111,7 @@
   `docker compose config`, логинится в GHCR во временный `DOCKER_CONFIG`, pull, тег в `.env`, `up -d --wait`,
   удаляет старые образы, ждёт HTTP-ответа.
 - Секреты репозитория: `DEPLOY_HOST`, `DEPLOY_SSH_KEY`, `DEPLOY_KNOWN_HOSTS`
-  (`5.180.47.109 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILC7PFoour3HJhP1FY05U6X7+57TIW/k0KEZVnxj1pvC`).
+  (ключ хоста — в «Сервер»; те же значения `DEPLOY_HOST` и `DEPLOY_KNOWN_HOSTS` — у go-bpm-site).
 - У сайта свой ключ CI и свой скрипт (forced command одного ключа вызывает один скрипт) — см. «Выкладка сайта».
 
 ## Выкладка сайта
