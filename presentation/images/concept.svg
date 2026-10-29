@@ -59,7 +59,7 @@
   <path d="M813 126c0 6 19 11 42 11s42-5 42-11" fill="none" stroke="#e0912f" stroke-width="2"/>
   <text x="855" y="188" text-anchor="middle" font-size="14" fill="#15212b">очередь задач,</text>
   <text x="855" y="208" text-anchor="middle" font-size="14" fill="#15212b">экземпляры, история</text>
-  <text x="855" y="228" text-anchor="middle" font-size="12" fill="#6b7680">та же база, что у сервиса</text>
+  <text x="855" y="228" text-anchor="middle" font-size="12" fill="#6b7680">своя или общая с сервисом</text>
 
   <text x="480" y="280" text-anchor="middle" font-size="14" fill="#6b7680">Схема — исходник. Код из неё собирается, проверяется и выкатывается вместе с сервисом.</text>
 </svg>

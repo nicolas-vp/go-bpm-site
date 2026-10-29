@@ -51,7 +51,7 @@
 
   <path d="M645 218v22" stroke="#6b7680" stroke-width="2" marker-end="url(#a)"/>
   <rect x="545" y="244" width="200" height="36" rx="8" fill="#fbefd9" stroke="#e0912f" stroke-width="2"/>
-  <text x="645" y="267" text-anchor="middle" font-size="12" fill="#a8650b">PostgreSQL сервиса</text>
+  <text x="645" y="267" text-anchor="middle" font-size="12" fill="#a8650b">PostgreSQL</text>
 
   <!-- цифры демо -->
   <text x="790" y="72" font-size="13" font-weight="700" fill="#15212b">Демо go-bpm</text>

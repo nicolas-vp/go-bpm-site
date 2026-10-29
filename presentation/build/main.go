@@ -74,7 +74,7 @@ a { color: #0b7896; text-decoration: none; }
 strong { color: #15212b; }
 .anchor { display: none; }
 img { display: block; max-width: 100%; max-height: 66mm; margin: 2mm auto 3mm; border-radius: 4px; }
-img[src*="elements"] { max-height: 50mm; }
+img[src*="elements"], img[src*="cycle"] { max-height: 50mm; }
 img[src$=".png"] { border: 1px solid #e1e3dd; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
 code { font-family: "JetBrains Mono", Consolas, "DejaVu Sans Mono", monospace; font-size: 0.88em; background: #f4f5f1; color: #24303a; padding: 0.5px 3px; border-radius: 3px; }
 .code { margin: 2mm 0 3mm; break-inside: avoid; }
