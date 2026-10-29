@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 380" width="960" height="380" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+<rect width="960" height="380" fill="#fff"/>
+<text x="20" y="32" font-size="17" font-weight="700" fill="#15212b">Экземпляров в секунду, процесс «старт → 2 REST-вызова → конец», с историей</text>
+<line x1="330" y1="52" x2="330" y2="340" stroke="#e1e3dd"/>
+<text x="330" y="358" text-anchor="middle" font-size="12" fill="#6b7680">0</text>
+<line x1="470" y1="52" x2="470" y2="340" stroke="#e1e3dd"/>
+<text x="470" y="358" text-anchor="middle" font-size="12" fill="#6b7680">300</text>
+<line x1="610" y1="52" x2="610" y2="340" stroke="#e1e3dd"/>
+<text x="610" y="358" text-anchor="middle" font-size="12" fill="#6b7680">600</text>
+<line x1="750" y1="52" x2="750" y2="340" stroke="#e1e3dd"/>
+<text x="750" y="358" text-anchor="middle" font-size="12" fill="#6b7680">900</text>
+<line x1="890" y1="52" x2="890" y2="340" stroke="#e1e3dd"/>
+<text x="890" y="358" text-anchor="middle" font-size="12" fill="#6b7680">1200</text>
+<text x="318" y="86" text-anchor="end" font-size="14" fill="#15212b">go-bpm, методы</text>
+<rect x="330" y="68" width="539" height="28" rx="4" fill="#0b7896"/>
+<text x="877" y="87" font-size="14" font-weight="700" fill="#15212b">1154</text>
+<text x="318" y="140" text-anchor="end" font-size="14" fill="#15212b">go-bpm, service task, async commit</text>
+<rect x="330" y="122" width="351" height="28" rx="4" fill="#0b7896"/>
+<text x="689" y="141" font-size="14" font-weight="700" fill="#15212b">752</text>
+<text x="318" y="194" text-anchor="end" font-size="14" fill="#15212b">go-bpm, service task</text>
+<rect x="330" y="176" width="196" height="28" rx="4" fill="#0b7896"/>
+<text x="534" y="195" font-size="14" font-weight="700" fill="#15212b">419</text>
+<text x="318" y="248" text-anchor="end" font-size="14" fill="#15212b">Camunda 7, история в PostgreSQL</text>
+<rect x="330" y="230" width="137" height="28" rx="4" fill="#b4bcc2"/>
+<text x="475" y="249" font-size="14" font-weight="700" fill="#15212b">293</text>
+<text x="318" y="302" text-anchor="end" font-size="14" fill="#15212b">Zeebe, экспорт в Elasticsearch</text>
+<rect x="330" y="284" width="52" height="28" rx="4" fill="#b4bcc2"/>
+<text x="390" y="303" font-size="14" font-weight="700" fill="#15212b">112</text>
+</svg>

@@ -78,6 +78,11 @@
   `go test -overlay`, без правок в go-bpm (`go.mod` рядом — только чтобы `go vet ./...` сайта его не трогал).
   `make examples` гоняет всё; job `examples` в CI — то же с PostgreSQL 18 и проверкой, что `go generate` не даёт
   diff. Deploy ждёт и build, и examples: сломанный пример не выкатится.
+- Презентация go-bpm: `presentation/go-bpm.md` (картинки — `presentation/images/`, скриншоты скопированы из docs
+  go-bpm, свои схемы — в цветах сайта). `make presentation` собирает `presentation/go-bpm.pdf`
+  (`presentation/build` — тот же парсер Markdown, листы A4 альбомом по `---`, печать headless Chrome). PDF лежит
+  в репозитории, встроен в сборщик (`site.Presentation`) и выкладывается как `/go-bpm.pdf`: после правки Markdown —
+  пересобрать PDF и закоммитить.
 - Локально: `make build`, `make serve` (`cmd/serve` раздаёт `dist/` и проксирует `/api/`, `/ui/` в демо на
   `localhost:8080`, его можно пробросить `ssh -L`).
 

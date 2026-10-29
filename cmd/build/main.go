@@ -273,6 +273,9 @@ func build(c config) error {
 	if err := copyFS(site.Static, "static", filepath.Join(c.out, "static")); err != nil {
 		return err
 	}
+	if err := write(filepath.Join(c.out, "go-bpm.pdf"), site.Presentation); err != nil {
+		return err
+	}
 	return copyDir(filepath.Join(c.docs, "images"), filepath.Join(c.out, "docs", "images"))
 }
 

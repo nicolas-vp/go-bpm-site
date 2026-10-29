@@ -1,6 +1,6 @@
 GO_BPM ?= ../go-bpm
 
-.PHONY: build serve test examples
+.PHONY: build serve test examples presentation
 
 # собрать сайт в dist/ из документации соседнего репозитория go-bpm
 build:
@@ -23,3 +23,8 @@ examples:
 	printf '{"Replace":{"%s/examples/demo/bpmgen/test_decision/decision_test.go":"%s/examples/demo/decision_test.go"}}' \
 		$(abspath $(GO_BPM)) $(CURDIR) > dist/overlay.json
 	cd $(GO_BPM) && go test -overlay $(CURDIR)/dist/overlay.json ./examples/demo/bpmgen/test_decision/
+
+# презентация: presentation/go-bpm.md -> presentation/go-bpm.pdf (нужен google-chrome)
+presentation:
+	go run ./presentation/build -out /tmp/go-bpm-presentation.html
+	google-chrome --headless --no-sandbox --no-pdf-header-footer --print-to-pdf=presentation/go-bpm.pdf /tmp/go-bpm-presentation.html
