@@ -122,8 +122,10 @@
     startEvent: 'старт', endEvent: 'конец', task: 'метод', scriptTask: 'скрипт', serviceTask: 'service task',
     businessRuleTask: 'правило DMN', userTask: 'задача пользователя', exclusiveGateway: 'шлюз',
     parallelGateway: 'параллельный шлюз', intermediateCatchEvent: 'таймер', boundaryEvent: 'граничное событие',
-    subProcess: 'подпроцесс', callActivity: 'вызов процесса',
+    subProcess: 'подпроцесс', callActivity: 'вызов процесса', receiveTask: 'ждёт сообщение',
   };
+
+  var WITH_TASKS = { TestUserTask: true, TestMultiInstance: true }; // процессы с задачами пользователей
 
   function showError(msg) {
     run.error.hidden = !msg;
@@ -184,41 +186,81 @@
         vars: { approved: false, comment: 'нет суммы' } });
     } else if (t.element_id === 'Fix') {
       actions.push({ label: 'Исправить как ' + (t.assignee || 'alice'), user: t.assignee || 'alice', vars: { amount: 100 } });
+    } else if (t.element_id === 'Review') {
+      actions.push({ label: 'Согласовать как bob', user: 'bob', groups: ['managers'], vars: { approved: true } });
+      actions.push({ label: 'Не согласовать: ещё круг', user: 'bob', groups: ['managers'], ghost: true,
+        vars: { approved: false } });
     } else {
       var user = t.assignee || 'demo';
       actions.push({ label: 'Выполнить как ' + user, user: user, groups: t.candidate_groups || [], vars: {} });
     }
     var who = t.assignee ? 'назначена ' + t.assignee :
       (t.candidate_groups && t.candidate_groups.length ? 'для групп ' + t.candidate_groups.join(', ') : 'для любого');
+    var round = t.variables && t.variables.loopCounter ? ', круг ' + t.variables.loopCounter + ' из 3' : '';
+    showActions('<p>Процесс ждёт человека: <strong>' + escapeHTML(t.name || t.element_id) + '</strong>, ' +
+      escapeHTML(who + round) + '.</p>', actions.map(function (a) {
+      return { label: a.label, ghost: a.ghost, run: function () { return completeTask(t, a); } };
+    }));
+  }
+
+  // --- ожидание сообщения: кнопка за внешнюю систему ---
+  function waitsForMessage(records) {
+    var waiting = {};
+    records.forEach(function (r) {
+      if (element(r.process_name, r.element_id).type !== 'receiveTask') return;
+      if (r.event === 'activated') waiting[r.element_id] = true;
+      else delete waiting[r.element_id];
+    });
+    return Object.keys(waiting).length > 0;
+  }
+
+  function renderMessage(inst, records) {
+    if (busy) return;
+    if (inst.status !== 'running' || !inst.business_key || !waitsForMessage(records)) {
+      run.tasks.hidden = true;
+      return;
+    }
+    var msg = { name: 'paymentReceived', correlationKey: inst.business_key, variables: { paid: true } };
+    showActions('<p>Процесс ждёт сообщение <code>paymentReceived</code> с ключом <code>' +
+      escapeHTML(inst.business_key) + '</code> — так платёжная система сообщила бы об оплате.</p>', [
+      { label: 'Прислать оплату', run: function () { return api('POST', '/messages', msg); } },
+    ]);
+  }
+
+  // showActions показывает текст и кнопки; после действия опрос экземпляра начинается заново.
+  function showActions(text, actions) {
     run.tasks.hidden = false;
-    run.tasks.innerHTML = '<p>Процесс ждёт человека: <strong>' + escapeHTML(t.name || t.element_id) + '</strong>, ' +
-      escapeHTML(who) + '.</p><div class="actions"></div>';
+    run.tasks.innerHTML = text + '<div class="actions"></div>';
     var box = $('.actions', run.tasks);
     actions.forEach(function (a) {
       var b = document.createElement('button');
       b.type = 'button';
       b.className = 'btn' + (a.ghost ? ' btn-ghost' : ' btn-primary');
       b.textContent = a.label;
-      b.addEventListener('click', function () { completeTask(t, a); });
+      b.addEventListener('click', function () { act(a.run); });
       box.appendChild(b);
     });
   }
 
-  function completeTask(t, a) {
+  function act(fn) {
     busy = true;
     $$('button', run.tasks).forEach(function (b) { b.disabled = true; });
     showError(null);
-    var claim = t.assignee === a.user ? Promise.resolve() :
-      api('POST', '/tasks/' + t.task_uid + '/claim', { userId: a.user, groups: a.groups || [] });
-    claim.then(function () {
-      return api('POST', '/tasks/' + t.task_uid + '/complete', { userId: a.user, variables: a.vars });
-    }).then(function () {
+    fn().then(function () {
       run.tasks.hidden = true;
     }).catch(function (e) {
       showError(e.message);
     }).then(function () {
       busy = false;
       startPolling();
+    });
+  }
+
+  function completeTask(t, a) {
+    var claim = t.assignee === a.user ? Promise.resolve() :
+      api('POST', '/tasks/' + t.task_uid + '/claim', { userId: a.user, groups: a.groups || [] });
+    return claim.then(function () {
+      return api('POST', '/tasks/' + t.task_uid + '/complete', { userId: a.user, variables: a.vars });
     });
   }
 
@@ -232,7 +274,7 @@
         if (e.status === 404) return { records: [] };
         throw e;
       }),
-      current.process === 'TestUserTask' ? api('GET', '/tasks?instanceId=' + id).catch(function () { return { tasks: [] }; })
+      WITH_TASKS[current.process] ? api('GET', '/tasks?instanceId=' + id).catch(function () { return { tasks: [] }; })
         : Promise.resolve({ tasks: [] }),
     ]).then(function (res) {
       if (!current || current.id !== id) return;
@@ -241,7 +283,8 @@
       records.forEach(function (r) { processes[r.process_name.split('.')[0]] = true; });
       return Promise.all(Object.keys(processes).map(loadNames)).then(function () {
         renderInstance(inst, records);
-        renderTasks(tasks);
+        if (current.process === 'TestMessage') renderMessage(inst, records);
+        else renderTasks(tasks);
         var waiting = inst.status === 'running';
         if (waiting && Date.now() < pollUntil) {
           pollTimer = setTimeout(poll, tasks.length ? POLL_MS * 2 : POLL_MS);

@@ -5,6 +5,7 @@ package main
 //	@@roadmap:stages@@ - обзор этапов и шкала сложности
 //	@@roadmap:<id>@@   - карточки задач этапа
 //
+// Сделанные задачи не удаляются, а вычеркиваются (done) и ведут в документацию (doc).
 // Заголовки этапов остаются в Markdown (оглавление, якоря), обзор ссылается на них по тексту заголовка.
 
 import (
@@ -23,6 +24,8 @@ type roadmapItem struct {
 	Level int    `json:"level"` // сложность: 1 - быстро, 5 - долго
 	Title string `json:"title"`
 	Text  string `json:"text"`
+	Done  bool   `json:"done"`
+	Doc   string `json:"doc"` // у сделанной: где о ней написано, /docs/<страница>/#якорь
 }
 
 type roadmapStage struct {
@@ -67,6 +70,7 @@ var roadmapIcons = map[string]string{
 	"undo":      `<path d="M9 14L4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/>`,
 	"split":     `<path d="M12 21v-8"/><path d="M12 13L5.5 6.5M12 13l6.5-6.5"/><path d="M5 11V6h5M19 11V6h-5"/>`,
 	"bolt":      `<path d="M13 2.5L4.5 14H11l-1 7.5L18.5 10H12z"/>`,
+	"check":     `<path d="M5 12.5l4.5 4.5L19 7.5"/>`,
 	"import":    `<path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>`,
 }
 
@@ -86,6 +90,9 @@ func loadRoadmap(file string) (*roadmapData, error) {
 		for _, it := range s.Items {
 			if _, ok := roadmapIcons[it.Icon]; !ok {
 				return nil, fmt.Errorf("%s: %s: нет иконки %q", file, it.Title, it.Icon)
+			}
+			if it.Done && !strings.HasPrefix(it.Doc, "/docs/") {
+				return nil, fmt.Errorf("%s: %s: сделана, но нет ссылки doc на /docs/", file, it.Title)
 			}
 			if it.Level < 1 || it.Level > roadmapLevels {
 				return nil, fmt.Errorf("%s: %s: сложность %d не от 1 до %d", file, it.Title, it.Level, roadmapLevels)
@@ -138,12 +145,25 @@ func (r *roadmapData) render(page string, headings []md.Heading) (string, error)
 	return out, firstErr
 }
 
+// docLinks - ссылки сделанных задач, сборка проверяет их вместе со ссылками страниц.
+func (r *roadmapData) docLinks() []string {
+	var links []string
+	for _, s := range r.Stages {
+		for _, it := range s.Items {
+			if it.Doc != "" {
+				links = append(links, it.Doc)
+			}
+		}
+	}
+	return links
+}
+
 func roadmapIcon(name string) string {
 	return `<svg viewBox="0 0 24 24" aria-hidden="true">` + roadmapIcons[name] + `</svg>`
 }
 
 // roadmapText - текст карточки: слова с / или _ и KindPrefix - код.
-var roadmapCodeRe = regexp.MustCompile(`(/[a-z0-9/]+|\b[a-z]+_[a-z_]+\b|\bKindPrefix\b|\bgovulncheck\b|\btimeDate\b|\btimeCycle\b|\bcamunda:\*)`)
+var roadmapCodeRe = regexp.MustCompile(`(/[a-z0-9/]+|\b[a-z]+_[a-z_]+\b|\bKindPrefix\b|\bgovulncheck\b|\btimeDate\b|\btimeCycle\b|\bcamunda:\*|\bengine\.[A-Z][a-zA-Z]+|\bmetrics\b|\bttl\b)`)
 
 func roadmapText(s string) string {
 	return roadmapCodeRe.ReplaceAllString(html.EscapeString(s), "<code>$1</code>")
@@ -174,16 +194,27 @@ func (r *roadmapData) overview(anchors map[string]string) (string, error) {
 		fmt.Fprintf(&b, `<li><a class="rm-stage" href="#%s"><span class="rm-stage-icon">%s</span>`+
 			`<span class="rm-stage-num">Этап %d</span><span class="rm-stage-name">%s</span><span class="rm-dots">`,
 			html.EscapeString(id), roadmapIcon(s.Icon), i+1, html.EscapeString(s.Short))
+		done := 0
 		for _, it := range s.Items {
-			fmt.Fprintf(&b, `<i class="rm-l%d" data-tip="%s"></i>`, it.Level, html.EscapeString(it.Title))
+			cls, tip := fmt.Sprintf("rm-l%d", it.Level), it.Title
+			if it.Done {
+				cls, tip = cls+" done", tip+" — сделано"
+				done++
+			}
+			fmt.Fprintf(&b, `<i class="%s" data-tip="%s"></i>`, cls, html.EscapeString(tip))
 		}
-		b.WriteString(`</span></a></li>`)
+		b.WriteString(`</span>`)
+		if done > 0 {
+			fmt.Fprintf(&b, `<span class="rm-stage-done">сделано %d из %d</span>`, done, len(s.Items))
+		}
+		b.WriteString(`</a></li>`)
 	}
 	b.WriteString(`</ol><div class="rm-scale" aria-hidden="true"><span>Сложность</span><span class="rm-scale-bar">`)
 	for i := 1; i <= roadmapLevels; i++ {
 		fmt.Fprintf(&b, `<i class="rm-l%d"></i>`, i)
 	}
-	b.WriteString(`</span><span class="rm-scale-ends"><span>быстро</span><span>долго</span></span></div></div><!--rm-->`)
+	b.WriteString(`</span><span class="rm-scale-ends"><span>быстро</span><span>долго</span></span>` +
+		`<span class="rm-scale-done"><i class="rm-l1 done"></i>сделано</span></div></div><!--rm-->`)
 	return b.String(), nil
 }
 
@@ -191,9 +222,17 @@ func (r *roadmapData) cards(s roadmapStage) string {
 	var b strings.Builder
 	b.WriteString(`<div class="rm-grid">`)
 	for _, it := range s.Items {
-		fmt.Fprintf(&b, `<article class="rm-card rm-l%d"><div class="rm-card-head"><span class="rm-icon">%s</span>%s</div>`+
-			`<h3 class="rm-title">%s</h3><p class="rm-text">%s</p></article>`,
-			it.Level, roadmapIcon(it.Icon), meter(it.Level), html.EscapeString(it.Title), roadmapText(it.Text))
+		if !it.Done {
+			fmt.Fprintf(&b, `<article class="rm-card rm-l%d"><div class="rm-card-head"><span class="rm-icon">%s</span>%s</div>`+
+				`<h3 class="rm-title">%s</h3><p class="rm-text">%s</p></article>`,
+				it.Level, roadmapIcon(it.Icon), meter(it.Level), html.EscapeString(it.Title), roadmapText(it.Text))
+			continue
+		}
+		fmt.Fprintf(&b, `<article class="rm-card rm-l%d rm-done"><div class="rm-card-head"><span class="rm-icon">%s</span>`+
+			`<span class="rm-badge">%s Сделано</span></div><h3 class="rm-title"><s>%s</s></h3><p class="rm-text">%s</p>`+
+			`<a class="rm-doc" href="%s">В документации</a></article>`,
+			it.Level, roadmapIcon(it.Icon), roadmapIcon("check"), html.EscapeString(it.Title), roadmapText(it.Text),
+			html.EscapeString(it.Doc))
 	}
 	b.WriteString(`</div><!--rm-->`)
 	return b.String()

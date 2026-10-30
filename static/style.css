@@ -794,6 +794,7 @@ img { max-width: 100%; height: auto; }
   border-radius: 10px;
   background: #fff;
 }
+.proc img.small { max-height: 150px; } /* схема в одну строку: не растягивать крупнее остальных */
 .proc p { margin: 0 0 14px; color: var(--ink-2); }
 .runs { display: flex; flex-wrap: wrap; gap: 8px; }
 .runs .btn { font-family: var(--mono); font-size: 13.5px; font-weight: 500; }
@@ -1192,6 +1193,30 @@ img { max-width: 100%; height: auto; }
 .prose .rm-title { margin: 2px 0 0; font-size: 16px; line-height: 1.3; }
 .prose .rm-text { margin: 0; font-size: 14px; line-height: 1.5; color: var(--ink-2); }
 .rm-text code { font-size: 0.86em; }
+
+/* сделанные задачи: вычеркнуты, но остаются на месте */
+.rm-dots i.done, .rm-scale-done i { background: transparent; box-shadow: inset 0 0 0 2px var(--ok); }
+.rm-stage-done { margin-top: 6px; font-size: 12px; color: var(--ok); font-weight: 600; }
+.rm-scale-done { display: inline-flex; align-items: center; gap: 6px; margin-left: 6px; }
+.rm-scale-done i { display: block; width: 12px; height: 12px; border-radius: 3px; }
+.rm-card.rm-done { border-top-color: var(--ok); background: color-mix(in srgb, var(--ok) 5%, var(--surface)); }
+.rm-done .rm-icon { background: color-mix(in srgb, var(--ok) 14%, transparent); color: var(--ok); }
+.rm-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 9px 2px 6px;
+  border-radius: 999px;
+  background: var(--ok-soft);
+  color: var(--ok);
+  font-size: 12px;
+  font-weight: 700;
+}
+.rm-badge svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.prose .rm-done .rm-title s { text-decoration-thickness: 2px; text-decoration-color: color-mix(in srgb, var(--ink-3) 70%, transparent); color: var(--ink-3); }
+.prose .rm-done .rm-text { color: var(--ink-3); }
+.prose .rm-doc { margin-top: auto; font-size: 14px; font-weight: 600; }
+.prose .rm-doc::after { content: " →"; }
 
 @media (max-width: 860px) {
   .prose .rm-stages { grid-template-columns: repeat(2, minmax(0, 1fr)); }
