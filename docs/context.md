@@ -64,9 +64,8 @@
   проходят через прокси, как и запуск: посетитель может повторить или отменить чужой экземпляр — для демо это
   приемлемо, лимит POST тот же. Статус `cancelled` есть в `demo.js` и в очистке (`deploy/cleanup.sh`).
 - Свои картинки сайта — `static/images/` (адрес `/static/images/...`), картинки docs go-bpm — `/docs/images/`.
-  `demo-multi-instance.svg` и `demo-message.svg` — схемы процессов демо TestMultiInstance и TestMessage, которых
-  в docs go-bpm нет: выгружены так же, как `demo-*.svg` go-bpm (вшитый в консоль bpmn-js 18.31.0, `saveSVG()`
-  в headless Chrome, белый фон после `<svg>`). Появятся в docs go-bpm — перейти на них.
+  Схемы TestMultiInstance и TestMessage выгружены здесь и перенесены в docs go-bpm (`75f8502`) — так же, как
+  остальные `demo-*.svg`: вшитый в консоль bpmn-js 18.31.0, `saveSVG()` в headless Chrome, белый фон после `<svg>`.
   `heatmap.png` (вкладка «Термокарта» в галерее главной) снят headless-Chrome с `/ui/#/heatmap?process=TestBpmProcess`
   живого демо (окно 1400×1000, обрезан до 1400×677, как скриншоты истории); данные — 8 экземпляров, запущенных
   через API демо. Если в docs go-bpm появится свой скриншот термокарты — лучше перейти на него.

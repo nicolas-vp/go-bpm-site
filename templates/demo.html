@@ -105,7 +105,7 @@
           <code class="proc-id">TestMultiInstance</code>
           <span class="count" data-count></span>
         </header>
-        <img class="small" src="/static/images/demo-multi-instance.svg" alt="TestMultiInstance: «Отправить уведомление» и «Согласовать (до трёх кругов)» с маркером последовательного multi-instance" loading="lazy">
+        <img class="small" src="/docs/images/demo-multi-instance.svg" alt="TestMultiInstance: «Отправить уведомление» и «Согласовать (до трёх кругов)» с маркером последовательного multi-instance" loading="lazy">
         <p>Последовательный multi-instance. Метод «Отправить уведомление» выполняется три раза подряд, каждый раз
           отдельным шагом очереди. «Согласовать» создаётся заново, пока менеджер не согласует, но не больше трёх
           кругов: условие завершения <code>=approved</code>, номер круга — переменная <code>loopCounter</code>.</p>
@@ -121,7 +121,7 @@
           <code class="proc-id">TestMessage</code>
           <span class="count" data-count></span>
         </header>
-        <img class="small" src="/static/images/demo-message.svg" alt="TestMessage: receive task «Дождаться оплаты» между стартом и концом" loading="lazy">
+        <img class="small" src="/docs/images/demo-message.svg" alt="TestMessage: receive task «Дождаться оплаты» между стартом и концом" loading="lazy">
         <p>Receive task ждёт сообщение <code>paymentReceived</code> — ответ внешней системы об оплате. Сообщение
           находит экземпляр по бизнес-ключу: отправьте его кнопкой справа или
           <code>POST /api/v1/messages</code>.</p>
