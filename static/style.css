@@ -1034,6 +1034,8 @@ img { max-width: 100%; height: auto; }
 .lvl-error { background: var(--bad-soft); color: var(--bad); }
 .lvl-warn { background: var(--warn-soft); color: var(--warn); }
 .modeler-rules-note { margin-top: 18px; }
+.modeler-rules-sub { max-width: 1000px; margin: 32px auto 12px; font-size: 19px; }
+.modeler-rules + .modeler-rules-sub { margin-top: 40px; }
 .modeler-mcp {
   max-width: 860px;
   margin: 0 auto;
