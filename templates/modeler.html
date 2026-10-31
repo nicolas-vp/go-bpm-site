@@ -113,26 +113,26 @@ tar -xzf go-bpm-modeler-linux-amd64.tar.gz
     <div class="wrap">
       <h2 class="section-title">Основные инструменты</h2>
       <dl class="modeler-tools">
-        <dt>Панель инструментов</dt>
+        <dt><svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/></svg><span>Панель инструментов</span></dt>
         <dd>Рабочая папка, новый BPMN или DMN, сохранение (<kbd>Ctrl</kbd>+<kbd>S</kbd>), отмена и возврат,
           копирование, вырезание и вставка, масштаб, цвет выделенных элементов, ссылка на документацию.</dd>
-        <dt>Список файлов</dt>
+        <dt><svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-2.5a1 1 0 0 1-.8-.4l-.9-1.2A1 1 0 0 0 15 3h-2a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1Z"/><path d="M20 21a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1h-2.9a1 1 0 0 1-.88-.55l-.42-.85a1 1 0 0 0-.92-.6H13a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1Z"/><path d="M3 5a2 2 0 0 0 2 2h3"/><path d="M3 3v13a2 2 0 0 0 2 2h3"/></svg><span>Список файлов</span></dt>
         <dd>Слева — все <code>*.bpmn</code> и <code>*.dmn</code> рабочей папки с подпапками. Ширину панели можно
           менять перетаскиванием, двойной щелчок по краю возвращает её.</dd>
-        <dt>Вкладки</dt>
+        <dt><svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M10 4v4"/><path d="M2 8h20"/><path d="M6 4v4"/></svg><span>Вкладки</span></dt>
         <dd>Несколько файлов открыты одновременно; точка у имени — несохранённые изменения. Закрыть окно с ними
           без вопроса не получится.</dd>
-        <dt>Палитра</dt>
+        <dt><svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.3 10a.7.7 0 0 1-.626-1.079L11.4 3a.7.7 0 0 1 1.198-.043L16.3 8.9a.7.7 0 0 1-.572 1.1Z"/><rect x="3" y="14" width="7" height="7" rx="1"/><circle cx="17.5" cy="17.5" r="3.5"/></svg><span>Палитра</span></dt>
         <dd>Начальное и конечное события, таймер и ожидание сообщения, шлюз, задачи — обычная, сервисная,
           скриптовая, пользовательская, AI task, — подпроцесс, пул и группа.</dd>
-        <dt>Меню элемента</dt>
+        <dt><svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4.1 12 6"/><path d="m5.1 8-2.9-.8"/><path d="m6 12-1.9 2"/><path d="M7.2 2.2 8 5.1"/><path d="M9.037 9.69a.498.498 0 0 1 .653-.653l11 4.5a.5.5 0 0 1-.074.949l-4.349 1.041a1 1 0 0 0-.74.739l-1.04 4.35a.5.5 0 0 1-.95.074z"/></svg><span>Меню элемента</span></dt>
         <dd>Появляется у выделенного элемента: добавить следующий элемент, соединить, гаечный ключ — заменить
           тип (только на поддерживаемые), удалить.</dd>
-        <dt>Панель свойств</dt>
+        <dt><svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 5H3"/><path d="M12 19H3"/><path d="M14 3v4"/><path d="M16 17v4"/><path d="M21 12h-9"/><path d="M21 19h-5"/><path d="M21 5h-7"/><path d="M8 10v4"/><path d="M8 12H3"/></svg><span>Панель свойств</span></dt>
         <dd>Справа: имя и ID, затем настройки go-bpm по типу элемента — jobType и попытки service task,
           выражение скрипта, решение DMN, вызываемый процесс, назначение и форма user task, ключ корреляции
           сообщения, таймер, условие перехода, multi-instance.</dd>
-        <dt>Линтер</dt>
+        <dt><svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg><span>Линтер</span></dt>
         <dd>Крестики и восклицательные знаки на элементах, текст — при наведении; внизу холста — счётчик
           ошибок и предупреждений, щелчок по нему прячет маркеры.</dd>
       </dl>
@@ -170,30 +170,30 @@ tar -xzf go-bpm-modeler-linux-amd64.tar.gz
           <tbody>
             <tr><td><code>supported-elements</code></td><td>Только поддерживаемые элементы и типы событий: без
               inclusive и event-based gateway, send и manual task, throw-событий, event sub-process, вложенного
-              подпроцесса, standard loop, непрерывающих граничных событий</td><td><span class="lvl lvl-error">ошибка</span></td></tr>
+              подпроцесса, standard loop, непрерывающих граничных событий</td><td><span class="lvl lvl-error"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>ошибка</span></td></tr>
             <tr><td><code>single-start-event</code></td><td>Ровно один start event, без таймера, сообщения и сигнала, — в процессе и в
-              каждом подпроцессе</td><td><span class="lvl lvl-error">ошибка</span></td></tr>
+              каждом подпроцессе</td><td><span class="lvl lvl-error"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>ошибка</span></td></tr>
             <tr><td><code>boundary-events</code></td><td>Граничный таймер — у task, script, service и user task;
-              граничная ошибка — у task, script и service task; таймер не у элемента с multi-instance</td><td><span class="lvl lvl-error">ошибка</span></td></tr>
+              граничная ошибка — у task, script и service task; таймер не у элемента с multi-instance</td><td><span class="lvl lvl-error"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>ошибка</span></td></tr>
             <tr><td><code>branches</code></td><td>У задач и событий один исходящий переход; условие — только на
-              выходе exclusive gateway; выход шлюза — с условием или default flow</td><td><span class="lvl lvl-error">ошибка</span></td></tr>
+              выходе exclusive gateway; выход шлюза — с условием или default flow</td><td><span class="lvl lvl-error"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>ошибка</span></td></tr>
             <tr><td><code>exclusive-default</code></td><td>У ветвящегося exclusive gateway есть default flow — иначе
-              экземпляр упадёт, если ни одно условие не подойдёт</td><td><span class="lvl lvl-warn">предупреждение</span></td></tr>
+              экземпляр упадёт, если ни одно условие не подойдёт</td><td><span class="lvl lvl-warn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>предупреждение</span></td></tr>
             <tr><td><code>required-properties</code></td><td>Заполнены jobType service task, выражение скрипта,
               решение и переменная результата, вызываемый процесс, сообщение с именем-константой, промпт и
-              переменная AI task</td><td><span class="lvl lvl-error">ошибка</span></td></tr>
+              переменная AI task</td><td><span class="lvl lvl-error"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>ошибка</span></td></tr>
             <tr><td><code>timers</code></td><td>Длительность ISO 8601 без лет и месяцев (<code>PT30S</code>,
               <code>P1DT2H</code>), дата RFC 3339 с зоной или <code>=переменная</code>, без
-              <code>timeCycle</code></td><td><span class="lvl lvl-error">ошибка</span></td></tr>
+              <code>timeCycle</code></td><td><span class="lvl lvl-error"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>ошибка</span></td></tr>
             <tr><td><code>multi-instance</code></td><td>Только последовательный; <code>loopCardinality</code> —
-              целое больше нуля; есть число выполнений или условие завершения</td><td><span class="lvl lvl-error">ошибка</span></td></tr>
+              целое больше нуля; есть число выполнений или условие завершения</td><td><span class="lvl lvl-error"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>ошибка</span></td></tr>
             <tr><td><code>assignments</code></td><td>Исполнитель, кандидаты и ключ корреляции — значение или
-              переменная (<code>=name</code>, <code>${name}</code>), не выражение</td><td><span class="lvl lvl-error">ошибка</span></td></tr>
+              переменная (<code>=name</code>, <code>${name}</code>), не выражение</td><td><span class="lvl lvl-error"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>ошибка</span></td></tr>
             <tr><td><code>process-ids</code></td><td>ID процесса не занят сгенерированным кодом
               (<code>handlers</code>, <code>model</code>, <code>services</code>) и не повторяется в других файлах
-              папки</td><td><span class="lvl lvl-error">ошибка</span></td></tr>
+              папки</td><td><span class="lvl lvl-error"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>ошибка</span></td></tr>
             <tr><td><code>references</code></td><td>Решение DMN и вызываемый процесс есть в файлах рабочей
-              папки</td><td><span class="lvl lvl-warn">предупреждение</span></td></tr>
+              папки</td><td><span class="lvl lvl-warn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>предупреждение</span></td></tr>
           </tbody>
         </table>
       </div>

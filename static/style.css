@@ -941,9 +941,9 @@ img { max-width: 100%; height: auto; }
 .modeler-gallery { max-width: 1120px; }
 .modeler-tools {
   display: grid;
-  grid-template-columns: 220px minmax(0, 1fr);
+  grid-template-columns: 250px minmax(0, 1fr);
   gap: 0;
-  max-width: 920px;
+  max-width: 960px;
   margin: 36px auto 0;
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -952,7 +952,23 @@ img { max-width: 100%; height: auto; }
 }
 .modeler-tools dt, .modeler-tools dd { margin: 0; padding: 16px 20px; border-top: 1px solid var(--line); }
 .modeler-tools dt:first-of-type, .modeler-tools dt:first-of-type + dd { border-top: none; }
-.modeler-tools dt { font-weight: 700; }
+.modeler-tools dt { display: flex; align-items: center; gap: 14px; font-weight: 700; }
+/* иконки lucide: линии цвета акцента в мягкой плашке */
+.tool-icon {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  padding: 9px;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+/* текст описания - на уровне середины иконки (плашка 40px) */
+.modeler-tools dd { align-self: center; }
 .modeler-tools dd { color: var(--ink-2); }
 .modeler-steps {
   list-style: none;
@@ -990,17 +1006,31 @@ img { max-width: 100%; height: auto; }
 .modeler-rules { max-width: 1000px; margin: 0 auto; overflow-x: auto; }
 .modeler-rules table {
   width: 100%;
-  border-collapse: collapse;
+  /* separate: со скруглённой рамкой collapse не рисует контур */
+  border-collapse: separate;
+  border-spacing: 0;
   background: var(--surface);
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-2);
   border-radius: var(--radius);
+  overflow: hidden;
   font-size: 15px;
 }
+.modeler-rules thead th { background: var(--bg-alt); }
 .modeler-rules th, .modeler-rules td { padding: 12px 16px; border-top: 1px solid var(--line); text-align: left; vertical-align: top; }
 .modeler-rules th { border-top: none; font-size: 13px; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.04em; }
 .modeler-rules td { color: var(--ink-2); }
 .modeler-rules td:first-child { white-space: nowrap; }
-.lvl { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 13px; font-weight: 600; white-space: nowrap; }
+.lvl {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 10px 2px 7px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.lvl svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 .lvl-error { background: var(--bad-soft); color: var(--bad); }
 .lvl-warn { background: var(--warn-soft); color: var(--warn); }
 .modeler-rules-note { margin-top: 18px; }
