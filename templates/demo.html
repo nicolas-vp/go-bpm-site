@@ -130,6 +130,23 @@
         </div>
         <a class="proc-more" href="/docs/examples/#testmessage-ожидание-сообщения">Как устроен процесс</a>
       </article>
+
+      <article class="proc" data-process="TestAiTask">
+        <header>
+          <h2>AI task: разбор обращения</h2>
+          <code class="proc-id">TestAiTask</code>
+          <span class="count" data-count></span>
+        </header>
+        <img class="small" src="/static/images/demo-ai-task.svg" alt="TestAiTask: AI task «Определить категорию» с граничным событием «Отказ модели» и AI task «Оценить срочность»" loading="lazy">
+        <p>Две AI task: движок отправляет модели промпт с переменной <code>request</code> и пишет ответ
+          в модель данных — категорию текстом в <code>category</code>, срочность JSON-ом в структуру
+          <code>triage</code>. Отказ модели уводит по граничному событию ошибки <code>ai_refusal</code>.
+          В демо модель — заглушка: в своём сервисе подключите любую, реализовав <code>engine.AIClient</code>.</p>
+        <div class="runs">
+          <button class="btn" type="button" data-start='{"variables":{"request":"Не могу войти в мобильный банк, пишет «неверный пароль»"}}'>Отправить обращение</button>
+        </div>
+        <a class="proc-more" href="/docs/bpmn/#ai-task--запрос-к-модели">Как устроен процесс</a>
+      </article>
     </div>
 
     <aside class="run" data-run aria-live="polite">
