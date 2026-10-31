@@ -5,7 +5,7 @@
 ## Что за проект go-bpm
 
 - Модуль `github.com/nicolas-vp/go-bpm`, Go 1.26, `pgx/v5`. BPM-движок на PostgreSQL: процессы рисуются в
-  BPMN/DMN (Camunda Modeler, Camunda 8 / zeebe), генератор `go-bpm-gen` превращает их в типизированный Go-код,
+  BPMN/DMN (свой go-bpm modeler, совместим с Camunda Modeler / Camunda 8 / zeebe), генератор `go-bpm-gen` превращает их в типизированный Go-код,
   движок исполняет его на очереди задач в той же базе. Каждый шаг — задача очереди, эффекты шага — в одной транзакции.
 - Возможности: service task, задачи и скрипты, шлюзы exclusive/parallel, подпроцессы и callActivity, таймеры,
   граничные события таймера и ошибки, решения DMN (компилируются в Go), задачи пользователей как в Camunda 7,
