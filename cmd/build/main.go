@@ -108,7 +108,7 @@ type docPage struct {
 type layout struct {
 	Title       string
 	Description string
-	Section     string // home, docs, demo - подсветка в шапке
+	Section     string // home, docs, demo, modeler - подсветка в шапке
 	SiteURL     string
 	Path        string // адрес страницы от корня, для canonical; пустой - страницы нет в поиске (404)
 	JSONLD      template.JS
@@ -269,13 +269,20 @@ func build(c config) error {
 	if err := render(tpl, "demo.html", demo, filepath.Join(c.out, "demo", "index.html")); err != nil {
 		return err
 	}
+	modeler := base
+	modeler.Title, modeler.Section, modeler.Path = "Моделер BPMN и DMN", "modeler", "/modeler/"
+	modeler.Description = "go-bpm modeler — десктопный редактор схем BPMN и DMN для go-bpm под Linux, Windows и macOS: " +
+		"только поддерживаемые элементы, проверка схемы правилами генератора."
+	if err := render(tpl, "modeler.html", modeler, filepath.Join(c.out, "modeler", "index.html")); err != nil {
+		return err
+	}
 	notFound := base
 	notFound.Title = "Страница не найдена"
 	if err := render(tpl, "404.html", notFound, filepath.Join(c.out, "404.html")); err != nil {
 		return err
 	}
 
-	if err := writeSEO(c, append([]string{"/", "/demo/"}, sitemap...)); err != nil {
+	if err := writeSEO(c, append([]string{"/", "/demo/", "/modeler/"}, sitemap...)); err != nil {
 		return err
 	}
 

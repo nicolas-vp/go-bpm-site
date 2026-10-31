@@ -164,6 +164,24 @@
   домена ещё выпускается; когда придёт, можно заменить пути в `go-bpm-tls.inc` (и выключить продление certbot)
   или остаться на Let's Encrypt.
 
+## Моделер
+
+- go-bpm modeler — десктопный редактор BPMN/DMN под go-bpm, репозиторий `nicolas-vp/go-bpm-modeler` (Wails, bpmn-js).
+  Страница `/modeler/` (`templates/modeler.html`, `static/modeler.js`, ссылка «Моделер» в шапке, в sitemap) —
+  описание, установка и сборки. Список сборок не встроен в сайт: страница читает `/downloads/modeler/index.json`
+  в браузере, поэтому новая сборка видна без пересборки сайта.
+- Сборки лежат вне релизов сайта — `/var/www/go-bpm-downloads/modeler` (выкладка сайта переключает `current` и не
+  должна их терять), nginx отдаёт их как `/downloads/` с `Cache-Control: no-cache` (`deploy/go-bpm.tech.conf`).
+  Раскладка: `builds/<сборка>/` (архивы, `SHA256SUMS`, `manifest.json`), симлинки каналов `dev` и `latest`,
+  `index.json` — манифесты обоих каналов (`null`, если канала нет).
+- Публикует CI моделера (job `publish`): push в main — канал `dev`, тег `v*` — релиз, канал `latest`. По SSH в
+  `/opt/go-bpm-modeler/publish.sh` (копия `deploy/publish.sh` репозитория моделера) уходит tar с четырьмя архивами,
+  аргумент — «<канал> <версия> <коммит>». Скрипт проверяет набор файлов, считает SHA-256, переключает канал,
+  хранит 3 сборки dev и 10 релизов, сверяет манифест, который отдаёт nginx. Ключ CI `go-bpm-modeler-ci` —
+  с `command="/opt/go-bpm-modeler/publish.sh",restrict` в `/root/.ssh/authorized_keys`; секреты моделера —
+  `DEPLOY_HOST`, `DEPLOY_SSH_KEY`, `DEPLOY_KNOWN_HOSTS`, как у сайта.
+- 2026-10-31: первая сборка `dev-5afd94b` выложена вручную тем же скриптом.
+
 ## Поиск (SEO)
 
 - Сборщик пишет `robots.txt` (закрыты `/api/` и `search.json`), `sitemap.xml` (главная, демо, все страницы docs),

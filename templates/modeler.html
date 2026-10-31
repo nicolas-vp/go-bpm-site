@@ -1,0 +1,49 @@
+{{define "modeler.html"}}{{template "top" .}}
+<main id="main" class="modeler">
+  <section class="demo-head">
+    <div class="wrap">
+      <p class="eyebrow">go-bpm modeler</p>
+      <h1>Редактор схем BPMN и DMN для go-bpm</h1>
+      <p class="lead">Десктопное приложение для Linux, Windows и macOS. В палитре только элементы, которые
+        поддерживает генератор go-bpm, свойства — в его формате, схема проверяется его правилами.
+        Файлы <code>*.bpmn</code> и <code>*.dmn</code> сохраняются в папку <code>process/</code> сервиса.</p>
+      <p class="modeler-src"><a href="https://github.com/nicolas-vp/go-bpm-modeler" rel="noopener">Исходный код на GitHub</a></p>
+    </div>
+  </section>
+
+  <section class="wrap modeler-builds" data-downloads>
+    <p class="demo-note" data-downloads-status>Загружаем список сборок…</p>
+  </section>
+
+  <section class="wrap modeler-install">
+    <h2>Установка</h2>
+    <div class="modeler-os">
+      <article>
+        <h3>Linux</h3>
+        <p>Распакуйте архив и запустите <code>go-bpm-modeler</code>. Нужны GTK 3 и WebKitGTK 4.1 — они есть
+          в Ubuntu 22.04+, Debian 12+, Fedora:</p>
+        <pre><code>sudo apt install libgtk-3-0 libwebkit2gtk-4.1-0
+tar -xzf go-bpm-modeler-linux-amd64.tar.gz
+./go-bpm-modeler</code></pre>
+      </article>
+      <article>
+        <h3>Windows</h3>
+        <p>Распакуйте архив и запустите <code>go-bpm-modeler.exe</code>. Нужен WebView2 — он есть в Windows 10
+          и 11. Сборка не подписана: SmartScreen предупредит, нажмите «Подробнее» → «Выполнить в любом
+          случае».</p>
+      </article>
+      <article>
+        <h3>macOS</h3>
+        <p>Для процессоров M1–M4 — Apple Silicon, для остальных — Intel. Распакуйте архив и перенесите
+          <code>go-bpm-modeler.app</code> в «Программы». Сборка не подписана: при первом запуске разрешите её в
+          «Системные настройки» → «Конфиденциальность и безопасность» → «Всё равно открыть» или снимите
+          карантин:</p>
+        <pre><code>xattr -dr com.apple.quarantine /Applications/go-bpm-modeler.app</code></pre>
+      </article>
+    </div>
+    <p class="demo-note">Контрольные суммы — в файле <code>SHA256SUMS</code> сборки:
+      <code>sha256sum -c SHA256SUMS --ignore-missing</code>.</p>
+  </section>
+</main>
+<script src="/static/modeler.js" defer></script>
+{{template "bottom" .}}{{end}}
