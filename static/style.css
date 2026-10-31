@@ -1019,7 +1019,8 @@ img { max-width: 100%; height: auto; }
 .modeler-rules th, .modeler-rules td { padding: 12px 16px; border-top: 1px solid var(--line); text-align: left; vertical-align: top; }
 .modeler-rules th { border-top: none; font-size: 13px; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.04em; }
 .modeler-rules td { color: var(--ink-2); }
-.modeler-rules td:first-child { white-space: nowrap; }
+/* код правила в таблице BPMN (три колонки) не переносится; в DMN первая колонка - описание, переносится */
+.modeler-rules td:first-child:nth-last-child(3) { white-space: nowrap; }
 .lvl {
   display: inline-flex;
   align-items: center;
