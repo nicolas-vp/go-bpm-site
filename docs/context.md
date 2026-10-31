@@ -175,8 +175,9 @@
   Раскладка: `builds/<сборка>/` (архивы, `SHA256SUMS`, `manifest.json`), симлинки каналов `dev` и `latest`,
   `index.json` — манифесты обоих каналов (`null`, если канала нет).
 - Публикует CI моделера (job `publish`): push в main — канал `dev`, тег `v*` — релиз, канал `latest`. По SSH в
-  `/opt/go-bpm-modeler/publish.sh` (копия `deploy/publish.sh` репозитория моделера) уходит tar с четырьмя архивами,
-  аргумент — «<канал> <версия> <коммит>». Скрипт проверяет набор файлов, считает SHA-256, переключает канал,
+  `/opt/go-bpm-modeler/publish.sh` (копия `deploy/publish.sh` репозитория моделера) уходит tar с архивами всех платформ,
+  аргумент — «<канал> <версия> <коммит>». Платформы — linux-amd64, linux-arm64 (ARM-раннер GitHub),
+  windows-amd64, darwin-amd64, darwin-arm64. Скрипт проверяет набор файлов, считает SHA-256, переключает канал,
   хранит 3 сборки dev и 10 релизов, сверяет манифест, который отдаёт nginx. Ключ CI `go-bpm-modeler-ci` —
   с `command="/opt/go-bpm-modeler/publish.sh",restrict` в `/root/.ssh/authorized_keys`; секреты моделера —
   `DEPLOY_HOST`, `DEPLOY_SSH_KEY`, `DEPLOY_KNOWN_HOSTS`, как у сайта.

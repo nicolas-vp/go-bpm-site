@@ -7,13 +7,14 @@
   if (!root) return;
   var status = root.querySelector("[data-downloads-status]");
 
-  // Платформа посетителя: сборки для неё выделяются. Архитектуру Mac браузер не сообщает - выделяются обе
+  // Платформа посетителя: сборки для неё выделяются. Архитектуру процессора браузер надёжно не сообщает -
+  // у Mac и Linux выделяются обе сборки
   function guessPlatforms() {
     var p = ((navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || "").toLowerCase();
     var ua = navigator.userAgent.toLowerCase();
     if (p.indexOf("win") === 0 || ua.indexOf("windows") >= 0) return ["windows-amd64"];
     if (p.indexOf("mac") === 0 || ua.indexOf("mac os") >= 0) return ["darwin-arm64", "darwin-amd64"];
-    if (p.indexOf("linux") >= 0 || ua.indexOf("linux") >= 0) return ["linux-amd64"];
+    if (p.indexOf("linux") >= 0 || ua.indexOf("linux") >= 0) return ["linux-amd64", "linux-arm64"];
     return [];
   }
   var mine = guessPlatforms();
