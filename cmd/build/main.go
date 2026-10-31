@@ -116,6 +116,7 @@ type layout struct {
 	Commit      string
 	CommitURL   string
 	Year        int
+	Updated     string // время сборки по Москве, в подвале
 	Page        any
 }
 
@@ -138,7 +139,8 @@ func build(c config) error {
 	if err := os.RemoveAll(c.out); err != nil {
 		return err
 	}
-	base := layout{Repo: c.repo, Year: time.Now().Year(), SiteURL: c.siteURL}
+	now := time.Now().In(time.FixedZone("МСК", 3*60*60))
+	base := layout{Repo: c.repo, Year: now.Year(), Updated: now.Format("02.01.2006 15:04 МСК"), SiteURL: c.siteURL}
 	var sitemap []string
 	if c.commit != "" {
 		base.Commit = c.commit[:min(7, len(c.commit))]
