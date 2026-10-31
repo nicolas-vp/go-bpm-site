@@ -182,10 +182,8 @@
   с `command="/opt/go-bpm-modeler/publish.sh",restrict` в `/root/.ssh/authorized_keys`; секреты моделера —
   `DEPLOY_HOST`, `DEPLOY_SSH_KEY`, `DEPLOY_KNOWN_HOSTS`, как у сайта.
 - 2026-10-31: первая сборка `dev-5afd94b` выложена вручную тем же скриптом.
-- Демо AI task (`TestAiTask`, go-bpm `6b07380`): схемы в docs go-bpm нет, поэтому `static/images/demo-ai-task.svg`
-  экспортирован здесь тем же вшитым bpmn-js 18.31.0 (headless Chrome, `saveSVG()`, белый фон после `<svg>`); появится
-  `demo-ai-task.svg` в docs go-bpm — перейти на неё. Модель в демо — заглушка `aistub`, отвечает `other` и
-  `{"urgent": false, ...}`.
+- Демо AI task (`TestAiTask`, go-bpm `6b07380`): схема `demo-ai-task.svg` и разбор — в docs go-bpm
+  (`examples.md#testaitask-ai-task`). Модель в демо — заглушка `aistub`, отвечает `other` и `{"urgent": false, ...}`.
 - Ниже установки — галерея (вкладки `data-gallery`, как на главной), преимущества, инструменты, порядок работы,
   таблица правил линтера и раздел MCP-сервера: включение кнопкой «AI-агент», команда `claude mcp add`, что агент
   читает и что подтверждает пользователь (порт 39190 — по умолчанию из `mcp.go` моделера). Скриншоты `static/images/modeler-*.png` (1600×900, DMN — 1600×480) снимает
