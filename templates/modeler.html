@@ -44,6 +44,178 @@ tar -xzf go-bpm-modeler-linux-amd64.tar.gz
     <p class="demo-note">Контрольные суммы — в файле <code>SHA256SUMS</code> сборки:
       <code>sha256sum -c SHA256SUMS --ignore-missing</code>.</p>
   </section>
+
+  <section class="section section-alt" id="screenshots">
+    <div class="wrap">
+      <h2 class="section-title">Как выглядит</h2>
+      <p class="muted center">Процесс «Согласование заказа» из быстрого старта go-bpm: решение DMN, задача
+        пользователя с эскалацией по таймеру, уведомление и ожидание оплаты.</p>
+      <div class="gallery modeler-gallery" data-gallery>
+        <div class="gallery-tabs" role="tablist">
+          <button type="button" role="tab" aria-selected="true" data-tab="0">Процесс</button>
+          <button type="button" role="tab" aria-selected="false" data-tab="1">Решение DMN</button>
+          <button type="button" role="tab" aria-selected="false" data-tab="2">Замена элемента</button>
+          <button type="button" role="tab" aria-selected="false" data-tab="3">Линтер</button>
+          <button type="button" role="tab" aria-selected="false" data-tab="4">Таблица DMN</button>
+        </div>
+        <figure class="gallery-frame">
+          <img src="/static/images/modeler-process.png" alt="Схема «Согласование заказа», выделена задача «Согласовать заказ», в панели свойств — кандидаты-группы managers и ключ формы approve-order" loading="lazy" data-pane="0">
+          <img src="/static/images/modeler-decision.png" alt="Задача «Рассчитать скидку»: решение Offer выбрано из таблиц рабочей папки, переменная результата offer" loading="lazy" data-pane="1" hidden>
+          <img src="/static/images/modeler-replace.png" alt="Меню «Заменить элемент»: пользовательская, сервисная задача, ожидание сообщения, решение DMN, скрипт, вызов процесса, подпроцесс, AI task" loading="lazy" data-pane="2" hidden>
+          <img src="/static/images/modeler-lint.png" alt="Черновик процесса: крестики на таймере и сервисной задаче, подсказка «длительность „3 дня“ не в формате ISO 8601», внизу «Ошибок: 2»" loading="lazy" data-pane="3" hidden>
+          <img src="/static/images/modeler-dmn.png" alt="Таблица решений «Скидка»: входы «Сумма заказа» и «Категория клиента», выходы «Скидка, %» и «Причина», hit policy First" loading="lazy" data-pane="4" hidden>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="why">
+    <div class="wrap">
+      <h2 class="section-title">Достоинства своего моделера</h2>
+      <p class="muted center">Универсальный редактор, например Camunda Modeler, даёт нарисовать всё, что есть в
+        BPMN, и часть этого генератор go-bpm отвергнет. Свой моделер знает, что умеет go-bpm.</p>
+      <div class="features">
+        <article class="feature">
+          <h3>Только то, что исполнит go-bpm</h3>
+          <p>В палитре, контекстном меню и меню замены нет элементов, которые генератор отвергнет: inclusive
+            gateway, send task, throw-событий, параллельного multi-instance.</p>
+        </article>
+        <article class="feature">
+          <h3>Ошибки до генерации</h3>
+          <p>Линтер проверяет схему правилами генератора и пишет те же сообщения: ветвление без шлюза, таймер
+            не в ISO 8601, пустой jobType видны на схеме сразу, а не после <code>go generate</code>.</p>
+        </article>
+        <article class="feature">
+          <h3>Свойства в формате go-bpm</h3>
+          <p>Панель свойств показывает только настройки, которые читает go-bpm, и пишет их как расширения
+            <code>gobpm:*</code>. Лишних полей, которые генератор игнорирует, нет.</p>
+        </article>
+        <article class="feature">
+          <h3>Связь между файлами</h3>
+          <p>Решение для business rule task и процесс для call activity выбираются из списка <code>*.dmn</code>
+            и <code>*.bpmn</code> рабочей папки, ссылку на несуществующий линтер подсветит.</p>
+        </article>
+        <article class="feature">
+          <h3>Лёгкий и без зависимостей</h3>
+          <p>Архив — 4–5 МБ: системный WebView вместо встроенного браузера, без Java и Node. Linux, Windows,
+            macOS Intel и Apple Silicon.</p>
+        </article>
+        <article class="feature">
+          <h3>Обычные файлы</h3>
+          <p>BPMN 2.0 и DMN 1.3 в папке сервиса, рядом с кодом и в том же git. Запись атомарная: оборванное
+            сохранение не испортит файл. Интерфейс — на русском.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt" id="tools">
+    <div class="wrap">
+      <h2 class="section-title">Основные инструменты</h2>
+      <dl class="modeler-tools">
+        <dt>Панель инструментов</dt>
+        <dd>Рабочая папка, новый BPMN или DMN, сохранение (<kbd>Ctrl</kbd>+<kbd>S</kbd>), отмена и возврат,
+          копирование, вырезание и вставка, масштаб, цвет выделенных элементов, ссылка на документацию.</dd>
+        <dt>Список файлов</dt>
+        <dd>Слева — все <code>*.bpmn</code> и <code>*.dmn</code> рабочей папки с подпапками. Ширину панели можно
+          менять перетаскиванием, двойной щелчок по краю возвращает её.</dd>
+        <dt>Вкладки</dt>
+        <dd>Несколько файлов открыты одновременно; точка у имени — несохранённые изменения. Закрыть окно с ними
+          без вопроса не получится.</dd>
+        <dt>Палитра</dt>
+        <dd>Начальное и конечное события, таймер и ожидание сообщения, шлюз, задачи — обычная, сервисная,
+          скриптовая, пользовательская, AI task, — подпроцесс, пул и группа.</dd>
+        <dt>Меню элемента</dt>
+        <dd>Появляется у выделенного элемента: добавить следующий элемент, соединить, гаечный ключ — заменить
+          тип (только на поддерживаемые), удалить.</dd>
+        <dt>Панель свойств</dt>
+        <dd>Справа: имя и ID, затем настройки go-bpm по типу элемента — jobType и попытки service task,
+          выражение скрипта, решение DMN, вызываемый процесс, назначение и форма user task, ключ корреляции
+          сообщения, таймер, условие перехода, multi-instance.</dd>
+        <dt>Линтер</dt>
+        <dd>Крестики и восклицательные знаки на элементах, текст — при наведении; внизу холста — счётчик
+          ошибок и предупреждений, щелчок по нему прячет маркеры.</dd>
+      </dl>
+    </div>
+  </section>
+
+  <section class="section" id="usage">
+    <div class="wrap">
+      <h2 class="section-title">Как пользоваться</h2>
+      <ol class="modeler-steps">
+        <li><strong>Откройте папку.</strong> «Папка» → <code>process/</code> вашего сервиса — там, где
+          <code>go-bpm-gen</code> ищет схемы. Моделер покажет все файлы и запомнит папку.</li>
+        <li><strong>Создайте схему.</strong> «BPMN» или «DMN» на панели инструментов, затем имя файла; подпапка —
+          через косую черту: <code>orders/approval</code>.</li>
+        <li><strong>Нарисуйте процесс.</strong> Элементы — из палитры, следующий шаг — из меню у элемента.
+          Разветвление — только шлюзом: у задачи один исходящий переход.</li>
+        <li><strong>Задайте ID и свойства.</strong> ID элемента станет именем Go-функции, ID процесса — пакетом,
+          поэтому лучше <code>CheckOrder</code>, чем <code>Activity_0shk46q</code>. Остальное — в панели свойств.</li>
+        <li><strong>Исправьте ошибки линтера.</strong> Наведите на крестик — текст ошибки такой же, как у
+          генератора. Предупреждения не мешают генерации, но стоит проверить.</li>
+        <li><strong>Сохраните и сгенерируйте код.</strong> <kbd>Ctrl</kbd>+<kbd>S</kbd>, затем
+          <code>go generate ./...</code> в сервисе — <a href="/docs/generator/">как устроен генератор</a>.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section section-alt" id="lint">
+    <div class="wrap">
+      <h2 class="section-title">Правила линтера</h2>
+      <p class="muted center">Ошибка — генератор go-bpm откажется генерировать код. Предупреждение — код
+        сгенерируется, но процесс, скорее всего, поведёт себя не так, как задумано.</p>
+      <div class="modeler-rules">
+        <table>
+          <thead><tr><th>Правило</th><th>Что проверяет</th><th>Уровень</th></tr></thead>
+          <tbody>
+            <tr><td><code>supported-elements</code></td><td>Только поддерживаемые элементы и типы событий: без
+              inclusive и event-based gateway, send и manual task, throw-событий, event sub-process, вложенного
+              подпроцесса, standard loop, непрерывающих граничных событий</td><td><span class="lvl lvl-error">ошибка</span></td></tr>
+            <tr><td><code>single-start-event</code></td><td>Ровно один start event, без таймера, сообщения и сигнала, — в процессе и в
+              каждом подпроцессе</td><td><span class="lvl lvl-error">ошибка</span></td></tr>
+            <tr><td><code>boundary-events</code></td><td>Граничный таймер — у task, script, service и user task;
+              граничная ошибка — у task, script и service task; таймер не у элемента с multi-instance</td><td><span class="lvl lvl-error">ошибка</span></td></tr>
+            <tr><td><code>branches</code></td><td>У задач и событий один исходящий переход; условие — только на
+              выходе exclusive gateway; выход шлюза — с условием или default flow</td><td><span class="lvl lvl-error">ошибка</span></td></tr>
+            <tr><td><code>exclusive-default</code></td><td>У ветвящегося exclusive gateway есть default flow — иначе
+              экземпляр упадёт, если ни одно условие не подойдёт</td><td><span class="lvl lvl-warn">предупреждение</span></td></tr>
+            <tr><td><code>required-properties</code></td><td>Заполнены jobType service task, выражение скрипта,
+              решение и переменная результата, вызываемый процесс, сообщение с именем-константой, промпт и
+              переменная AI task</td><td><span class="lvl lvl-error">ошибка</span></td></tr>
+            <tr><td><code>timers</code></td><td>Длительность ISO 8601 без лет и месяцев (<code>PT30S</code>,
+              <code>P1DT2H</code>), дата RFC 3339 с зоной или <code>=переменная</code>, без
+              <code>timeCycle</code></td><td><span class="lvl lvl-error">ошибка</span></td></tr>
+            <tr><td><code>multi-instance</code></td><td>Только последовательный; <code>loopCardinality</code> —
+              целое больше нуля; есть число выполнений или условие завершения</td><td><span class="lvl lvl-error">ошибка</span></td></tr>
+            <tr><td><code>assignments</code></td><td>Исполнитель, кандидаты и ключ корреляции — значение или
+              переменная (<code>=name</code>, <code>${name}</code>), не выражение</td><td><span class="lvl lvl-error">ошибка</span></td></tr>
+            <tr><td><code>process-ids</code></td><td>ID процесса не занят сгенерированным кодом
+              (<code>handlers</code>, <code>model</code>, <code>services</code>) и не повторяется в других файлах
+              папки</td><td><span class="lvl lvl-error">ошибка</span></td></tr>
+            <tr><td><code>references</code></td><td>Решение DMN и вызываемый процесс есть в файлах рабочей
+              папки</td><td><span class="lvl lvl-warn">предупреждение</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted center modeler-rules-note">Чего линтер не знает: есть ли поля в модели данных
+        <code>DataModel</code> и компилируются ли выражения — это проверит генератор.</p>
+    </div>
+  </section>
+
+  <section class="section" id="mcp">
+    <div class="wrap">
+      <div class="modeler-mcp">
+        <p class="eyebrow">MCP-сервер <span class="badge running">в разработке</span></p>
+        <h2>Схемы для AI-агента</h2>
+        <p>Моделер получит встроенный MCP-сервер: AI-агент — Claude Code, Cursor и другие с поддержкой MCP —
+          сможет читать и создавать схемы в рабочей папке, проверять их линтером и править открытую схему, а
+          изменения будут сразу видны в окне моделера. Сервер будет доступен только с этого компьютера и только
+          к рабочей папке.</p>
+        <p>Как подключить агента — появится здесь вместе с выходом. Следить за работой — в
+          <a href="https://github.com/nicolas-vp/go-bpm-modeler" rel="noopener">репозитории моделера</a>.</p>
+      </div>
+    </div>
+  </section>
 </main>
 <script src="/static/modeler.js" defer></script>
 {{template "bottom" .}}{{end}}

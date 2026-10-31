@@ -938,6 +938,89 @@ img { max-width: 100%; height: auto; }
 .modeler-os p { margin: 0 0 10px; font-size: 14.5px; color: var(--ink-2); }
 .modeler-os pre { margin: 0; padding: 10px 12px; border-radius: 8px; background: var(--code-bg); overflow-x: auto; font-size: 12.5px; }
 @media (max-width: 960px) { .modeler-os { grid-template-columns: minmax(0, 1fr); } }
+.modeler-gallery { max-width: 1120px; }
+.modeler-tools {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 0;
+  max-width: 920px;
+  margin: 36px auto 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  overflow: hidden;
+}
+.modeler-tools dt, .modeler-tools dd { margin: 0; padding: 16px 20px; border-top: 1px solid var(--line); }
+.modeler-tools dt:first-of-type, .modeler-tools dt:first-of-type + dd { border-top: none; }
+.modeler-tools dt { font-weight: 700; }
+.modeler-tools dd { color: var(--ink-2); }
+.modeler-steps {
+  list-style: none;
+  counter-reset: step;
+  max-width: 860px;
+  margin: 36px auto 0;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+}
+.modeler-steps li {
+  counter-increment: step;
+  position: relative;
+  padding: 16px 20px 16px 64px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink-2);
+}
+.modeler-steps li::before {
+  content: counter(step);
+  position: absolute;
+  left: 18px;
+  top: 14px;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  color: var(--accent);
+  font-weight: 700;
+}
+.modeler-steps strong { color: var(--ink); }
+.modeler-rules { max-width: 1000px; margin: 0 auto; overflow-x: auto; }
+.modeler-rules table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  font-size: 15px;
+}
+.modeler-rules th, .modeler-rules td { padding: 12px 16px; border-top: 1px solid var(--line); text-align: left; vertical-align: top; }
+.modeler-rules th { border-top: none; font-size: 13px; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.04em; }
+.modeler-rules td { color: var(--ink-2); }
+.modeler-rules td:first-child { white-space: nowrap; }
+.lvl { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 13px; font-weight: 600; white-space: nowrap; }
+.lvl-error { background: var(--bad-soft); color: var(--bad); }
+.lvl-warn { background: var(--warn-soft); color: var(--warn); }
+.modeler-rules-note { margin-top: 18px; }
+.modeler-mcp {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 32px 36px;
+  border: 1px dashed var(--line-2);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.modeler-mcp h2 { margin: 0 0 12px; font-size: clamp(24px, 2.6vw, 30px); }
+.modeler-mcp p { color: var(--ink-2); }
+.modeler-mcp p:last-child { margin-bottom: 0; }
+.modeler-mcp .badge { margin-left: 8px; vertical-align: 1px; text-transform: none; letter-spacing: 0; }
+@media (max-width: 720px) {
+  .modeler-tools { grid-template-columns: minmax(0, 1fr); }
+  .modeler-tools dd { border-top: none; padding-top: 0; }
+  .modeler-mcp { padding: 24px 20px; }
+}
 @media (max-width: 520px) {
   .modeler-files li { flex-direction: column; align-items: stretch; }
 }

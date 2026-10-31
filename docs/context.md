@@ -181,6 +181,11 @@
   с `command="/opt/go-bpm-modeler/publish.sh",restrict` в `/root/.ssh/authorized_keys`; секреты моделера —
   `DEPLOY_HOST`, `DEPLOY_SSH_KEY`, `DEPLOY_KNOWN_HOSTS`, как у сайта.
 - 2026-10-31: первая сборка `dev-5afd94b` выложена вручную тем же скриптом.
+- Ниже установки — галерея (вкладки `data-gallery`, как на главной), преимущества, инструменты, порядок работы,
+  таблица правил линтера и раздел MCP-сервера с пометкой «в разработке» (сервера ещё нет — не обещать, как
+  подключаться, пока не вышел). Скриншоты `static/images/modeler-*.png` (1600×900, DMN — 1600×480) снимает
+  `frontend/e2e/screenshots.mjs` моделера: `node e2e/screenshots.mjs dist <каталог>` после `npm run build`.
+  Таблица правил — руками по `frontend/src/bpmn/lint/rules.ts` моделера: новое правило — дописать строку.
 
 ## Поиск (SEO)
 
