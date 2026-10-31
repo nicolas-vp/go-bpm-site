@@ -1048,6 +1048,8 @@ img { max-width: 100%; height: auto; }
 .modeler-mcp p { color: var(--ink-2); }
 .modeler-mcp p:last-child { margin-bottom: 0; }
 .modeler-mcp .badge { margin-left: 8px; vertical-align: 1px; text-transform: none; letter-spacing: 0; }
+.mcp-steps { margin: 0 0 16px; padding-left: 22px; color: var(--ink-2); display: grid; gap: 8px; }
+.mcp-steps pre { margin: 8px 0 0; padding: 10px 12px; border-radius: 8px; background: var(--code-bg); overflow-x: auto; font-size: 12.5px; }
 @media (max-width: 720px) {
   .modeler-tools { grid-template-columns: minmax(0, 1fr); }
   .modeler-tools dd { border-top: none; padding-top: 0; }
