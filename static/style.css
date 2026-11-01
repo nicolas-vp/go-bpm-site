@@ -496,6 +496,18 @@ img { max-width: 100%; height: auto; }
   box-shadow: var(--shadow);
 }
 
+.video { max-width: 1000px; margin: 0 auto; }
+.video video {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: #000;
+  box-shadow: var(--shadow);
+}
+
 .embed { display: grid; gap: 16px; max-width: 860px; margin: 0 auto 24px; }
 
 .gallery { max-width: 1000px; margin: 0 auto; }
