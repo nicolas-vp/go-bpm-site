@@ -197,6 +197,12 @@
 
 ## Поиск (SEO)
 
+- 2026-11-03: страница совместимости с Astra Linux — `/docs/astra-linux/`, исходник `content/astra-linux.md`.
+  Собственная проверка движка (коммит `73e9a5a`) и моделера (`dev-1b67aca`) на Astra Linux SE 1.8.1.6,
+  базовый уровень, PostgreSQL 15.6 Astra. Четыре сценария завершены; скриншоты — `static/images/astra-*.png`,
+  оригиналы и протокол — `artifacts/astra-linux/`. Не заявлять сертификацию производителя ОС или проверку
+  других версий и уровней защищённости. Ссылки — главная, меню документации, подвал, установка моделера.
+
 - Сборщик пишет `robots.txt` (закрыты `/api/` и `search.json`), `sitemap.xml` (главная, демо, все страницы docs),
   ключ IndexNow `/<ключ>.txt` (`indexNowKey` в `cmd/build/main.go`), `favicon.ico` и `apple-touch-icon.png` в корень.
 - У каждой страницы `canonical`, Open Graph (`og:image` — `static/og.png`, 1200×630), `twitter:card`; у 404 —

@@ -57,6 +57,8 @@ var pages = []struct {
 		"Как тестировать процессы go-bpm обычным go test: юнит-тесты методов, условий и решений DMN, e2e на настоящем PostgreSQL."},
 	{"performance.md", "performance", "Насколько быстрый go-bpm", true,
 		"Нагрузочный тест go-bpm по методике статьи о Camunda и Zeebe: экземпляры в секунду с историей в PostgreSQL и без, на той же машине."},
+	{"astra-linux.md", "astra-linux", "Совместимость с Astra Linux", true,
+		"go-bpm на Astra Linux Special Edition 1.8.1.6: проверка движка, BPMN и DMN, веб-консоли и моделера. Результаты и скриншоты."},
 	{"roadmap.md", "roadmap", "Дорожная карта", true,
 		"Дорожная карта go-bpm: что уже сделано и что дальше — документация, авторизация, недостающий BPMN, компенсации, от простого к сложному."},
 	{"about.md", "about", "О нас", true,
@@ -180,7 +182,11 @@ func build(c config) error {
 		}
 		url := pageURL(p.slug)
 		doc := md.Render(string(src), md.Options{Link: func(dest string, image bool) string {
-			u := rewriteLink(c, published, dest, image)
+			u := dest
+			// Абсолютные пути страниц сайта ведут на сайт, а не в docs репозитория движка.
+			if !p.site || !strings.HasPrefix(dest, "/") {
+				u = rewriteLink(c, published, dest, image)
+			}
 			if strings.HasPrefix(u, "/docs/") && !image {
 				links = append(links, p.file+" → "+u)
 			}
