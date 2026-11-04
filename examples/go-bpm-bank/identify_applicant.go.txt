@@ -1,0 +1,13 @@
+"IdentifyApplicant": {
+	ElementId:    "IdentifyApplicant",
+	ActivateType: bpm.ActivateTypeUserTask,
+	CompleteType: bpm.CompleteTypeStraight,
+	NextElements: []string{"Flow_2"},
+	Boundaries: []bpm.Boundary{
+		{ElementId: "IntakeDeadline", Type: bpm.BoundaryTypeTimer, Timer: 5 * time.Minute},
+	},
+	UserTask: &bpm.UserTask{
+		Name:            "Заполнить и проверить анкету",
+		CandidateGroups: []string{"operators"},
+	},
+},

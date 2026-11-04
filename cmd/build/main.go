@@ -55,6 +55,8 @@ var pages = []struct {
 		"Как подключить Claude Code, Cursor и другие агенты к go-bpm modeler по MCP: консультации по схеме и правки с вашим подтверждением."},
 	{"testing.md", "testing", "Тестирование процессов", true,
 		"Как тестировать процессы go-bpm обычным go test: юнит-тесты методов, условий и решений DMN, e2e на настоящем PostgreSQL."},
+	{"go-bpm-bank.md", "go-bpm-bank", "Пример: открытие счёта", true,
+		"GoBpmBank — учебный пример открытия счёта для небольшого банка: проектирование, восемь BPMN-процессов, DMN, задачи сотрудников и мок-АБС."},
 	{"performance.md", "performance", "Насколько быстрый go-bpm", true,
 		"Нагрузочный тест go-bpm по методике статьи о Camunda и Zeebe: экземпляры в секунду с историей в PostgreSQL и без, на той же машине."},
 	{"astra-linux.md", "astra-linux", "Совместимость с Astra Linux", true,
