@@ -29,41 +29,41 @@ import (
 //
 // desc - описание для поисковиков (meta description, до 160 знаков). Пустое - берётся первый абзац страницы.
 var pages = []struct {
-	file, slug, label string
-	site              bool
-	desc              string
+	file, slug, label, group string
+	site                     bool
+	desc                     string
 }{
-	{"README.md", "", "Обзор", false,
+	{"README.md", "", "Обзор", "Начало работы", false,
 		"Документация go-bpm — BPMN-движка для Go на PostgreSQL: процессы в BPMN, правила в DMN, генерация Go-кода, API, консоль, эксплуатация."},
-	{"quickstart.md", "quickstart", "Быстрый старт", false,
+	{"quickstart.md", "quickstart", "Быстрый старт", "Начало работы", false,
 		"Демо go-bpm за пять минут и свой сервис с нуля: процесс в go-bpm modeler или Camunda Modeler, генерация Go-кода, движок на PostgreSQL."},
-	{"concepts.md", "concepts", "Принципы работы", false,
+	{"concepts.md", "concepts", "Принципы работы", "Начало работы", false,
 		"Как go-bpm исполняет BPMN и DMN: токен, шаги и транзакции, очередь задач в PostgreSQL, повторы и переменные процесса."},
-	{"bpmn.md", "bpmn", "Моделирование BPMN", false,
+	{"bpmn.md", "bpmn", "Моделирование BPMN", "Процессы и примеры", false,
 		"Какие элементы BPMN поддерживает go-bpm и как их настроить в моделере: задачи, AI task, шлюзы, таймеры, сообщения, multi-instance."},
-	{"dmn.md", "dmn", "Решения DMN", false,
+	{"dmn.md", "dmn", "Решения DMN", "Процессы и примеры", false,
 		"Таблицы решений DMN в go-bpm компилируются в Go-функции: ячейки, hit policy, история сработавших правил в PostgreSQL."},
-	{"generator.md", "generator", "Генератор кода", false,
+	{"generator.md", "generator", "Генератор кода", "Процессы и примеры", false,
 		"go-bpm-gen превращает BPMN и DMN в типизированный Go-код: запуск, раскладка пакетов, модель данных, методы и обработчики."},
-	{"examples.md", "examples", "Разбор примеров", false,
-		"Разбор процессов демо go-bpm: задачи пользователей, решения DMN, call activity, таймеры и ошибки, multi-instance, сообщения."},
-	{"running.md", "running", "Запуск и эксплуатация", false,
-		"Эксплуатация go-bpm: настройки и хуки движка, таблицы и очистка истории, метрики Prometheus, масштабирование, упавшие экземпляры."},
-	{"api.md", "api", "HTTP API и консоль", false,
-		"HTTP API go-bpm и веб-консоль /ui/: процессы, экземпляры, задачи пользователей, сообщения, упавшие задачи, термокарта и динамика."},
-	{"modeler-mcp.md", "modeler-mcp", "AI-агент в моделере", true,
+	{"modeler-mcp.md", "modeler-mcp", "AI-агент в моделере", "Процессы и примеры", true,
 		"Как подключить Claude Code, Cursor и другие агенты к go-bpm modeler по MCP: консультации по схеме и правки с вашим подтверждением."},
-	{"testing.md", "testing", "Тестирование процессов", true,
-		"Как тестировать процессы go-bpm обычным go test: юнит-тесты методов, условий и решений DMN, e2e на настоящем PostgreSQL."},
-	{"go-bpm-bank.md", "go-bpm-bank", "Пример: открытие счёта", true,
+	{"examples.md", "examples", "Разбор примеров", "Процессы и примеры", false,
+		"Разбор процессов демо go-bpm: задачи пользователей, решения DMN, call activity, таймеры и ошибки, multi-instance, сообщения."},
+	{"go-bpm-bank.md", "go-bpm-bank", "Пример: открытие счёта", "Процессы и примеры", true,
 		"GoBpmBank — учебный пример открытия счёта для небольшого банка: проектирование, восемь BPMN-процессов, DMN, задачи сотрудников и мок-АБС."},
-	{"performance.md", "performance", "Насколько быстрый go-bpm", true,
+	{"testing.md", "testing", "Тестирование процессов", "Процессы и примеры", true,
+		"Как тестировать процессы go-bpm обычным go test: юнит-тесты методов, условий и решений DMN, e2e на настоящем PostgreSQL."},
+	{"running.md", "running", "Запуск и эксплуатация", "Эксплуатация", false,
+		"Эксплуатация go-bpm: настройки и хуки движка, таблицы и очистка истории, метрики Prometheus, масштабирование, упавшие экземпляры."},
+	{"api.md", "api", "HTTP API и консоль", "Эксплуатация", false,
+		"HTTP API go-bpm и веб-консоль /ui/: процессы, экземпляры, задачи пользователей, сообщения, упавшие задачи, термокарта и динамика."},
+	{"performance.md", "performance", "Насколько быстрый go-bpm", "Эксплуатация", true,
 		"Нагрузочный тест go-bpm по методике статьи о Camunda и Zeebe: экземпляры в секунду с историей в PostgreSQL и без, на той же машине."},
-	{"astra-linux.md", "astra-linux", "Совместимость с Astra Linux", true,
+	{"astra-linux.md", "astra-linux", "Совместимость с Astra Linux", "Эксплуатация", true,
 		"go-bpm на Astra Linux Special Edition 1.8.1.6: проверка движка, BPMN и DMN, веб-консоли и моделера. Результаты и скриншоты."},
-	{"roadmap.md", "roadmap", "Дорожная карта", true,
+	{"roadmap.md", "roadmap", "Дорожная карта", "О проекте", true,
 		"Дорожная карта go-bpm: что уже сделано и что дальше — документация, авторизация, недостающий BPMN, компенсации, от простого к сложному."},
-	{"about.md", "about", "О нас", true,
+	{"about.md", "about", "О нас", "О проекте", true,
 		"Кто разрабатывает go-bpm — BPMN-движок для Go на PostgreSQL — и как с нами связаться."},
 }
 
@@ -95,8 +95,25 @@ func main() {
 
 // navItem - пункт меню документации.
 type navItem struct {
-	URL, Label string
-	Active     bool
+	URL, Label, Group string
+	Active            bool
+}
+
+type navGroup struct {
+	Label string
+	Items []navItem
+}
+
+func groupNavigation(items []navItem) []navGroup {
+	var groups []navGroup
+	for _, item := range items {
+		if len(groups) == 0 || groups[len(groups)-1].Label != item.Group {
+			groups = append(groups, navGroup{Label: item.Group})
+		}
+		last := &groups[len(groups)-1]
+		last.Items = append(last.Items, item)
+	}
+	return groups
 }
 
 // docPage - данные шаблона страницы документации.
@@ -104,7 +121,7 @@ type docPage struct {
 	Title    string
 	Content  template.HTML
 	Headings []md.Heading
-	Nav      []navItem
+	Nav      []navGroup
 	Prev     *navItem
 	Next     *navItem
 	EditURL  string
@@ -160,7 +177,7 @@ func build(c config) error {
 
 	var nav []navItem
 	for _, p := range pages {
-		nav = append(nav, navItem{URL: pageURL(p.slug), Label: p.label})
+		nav = append(nav, navItem{URL: pageURL(p.slug), Label: p.label, Group: p.group})
 	}
 
 	var (
@@ -234,7 +251,7 @@ func build(c config) error {
 			Title:    doc.Title,
 			Content:  template.HTML(doc.HTML),
 			Headings: doc.Headings,
-			Nav:      pnav,
+			Nav:      groupNavigation(pnav),
 			EditURL:  editURL,
 		}
 		if i > 0 {

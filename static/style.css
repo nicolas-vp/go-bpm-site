@@ -173,6 +173,8 @@ img { max-width: 100%; height: auto; }
 .brand-mark { width: 28px; height: 28px; fill: none; stroke: var(--accent); stroke-width: 2.2; stroke-linecap: round; }
 .brand-mark circle { fill: var(--token); stroke: var(--token); }
 
+.menu-toggle { display: none; }
+
 .mainnav { display: flex; gap: 4px; margin-right: auto; }
 .mainnav a {
   color: var(--ink-2);
@@ -1104,6 +1106,10 @@ img { max-width: 100%; height: auto; }
   margin: 0 auto;
   padding: 28px 24px;
 }
+.footer-intro, .footer-nav, .footer-meta { width: 100%; }
+.footer-nav { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin: 12px 0; }
+.footer-nav strong, .footer-nav a { display: block; margin-bottom: 8px; }
+.footer-nav a { width: fit-content; }
 .footer strong { color: var(--ink); }
 .footer a { color: var(--ink-2); }
 
@@ -1114,8 +1120,11 @@ img { max-width: 100%; height: auto; }
   .toc { display: none; }
 }
 
-@media (max-width: 1020px) {
-  .mainnav .nav-extra { display: none; }
+@media (max-width: 1280px) {
+  .menu-toggle { display: block; margin-right: auto; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); font: inherit; cursor: pointer; }
+  .mainnav { display: none; position: absolute; top: 100%; left: 0; right: 0; padding: 16px 24px; max-height: calc(100dvh - var(--topbar)); overflow-y: auto; background: var(--bg); border-bottom: 1px solid var(--line); box-shadow: 0 12px 24px #0001; }
+  .mainnav.open { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .mainnav a { padding: 12px; }
 }
 
 @media (max-width: 960px) {
@@ -1154,7 +1163,7 @@ img { max-width: 100%; height: auto; }
 @media (max-width: 720px) {
   .wrap, .topbar-in, .docs, .footer-in { padding-left: 16px; padding-right: 16px; }
   .topbar-in { gap: 10px; }
-  .mainnav a[href^="http"], .mainnav a[href="/ui/"], .mainnav .nav-extra { display: none; }
+
   .mainnav a { padding: 6px 8px; }
   .search-open { min-width: 0; padding: 0; width: 36px; justify-content: center; }
   .search-open span, .search-open kbd { display: none; }
@@ -1167,6 +1176,11 @@ img { max-width: 100%; height: auto; }
   .pager-next { grid-column: 1; }
   .prose h2 { font-size: 23px; }
   .proc { padding: 18px; }
+}
+
+@media (max-width: 520px) {
+  .footer-nav { grid-template-columns: minmax(0, 1fr); }
+  .mainnav.open { grid-template-columns: minmax(0, 1fr); }
 }
 
 @media (max-width: 420px) {

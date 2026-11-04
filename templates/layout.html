@@ -41,14 +41,15 @@
       <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><circle cx="7" cy="16" r="4.5"/><path d="M11.5 16h4"/><rect x="15.5" y="10" width="10" height="12" rx="3"/><path d="M25.5 16h0"/></svg>
       <span>go-bpm</span>
     </a>
-    <nav class="mainnav" aria-label="Разделы">
+    <button class="menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="main-nav">Меню</button>
+    <nav id="main-nav" class="mainnav" aria-label="Разделы">
       <a href="/docs/"{{if eq .Section "docs"}} aria-current="page"{{end}}>Документация</a>
+      <a href="/modeler/"{{if eq .Section "modeler"}} aria-current="page"{{end}}>Моделер</a>
+      <a href="/demo/"{{if eq .Section "demo"}} aria-current="page"{{end}}>Демо</a>
+      <a href="/ui/">Консоль</a>
       <a class="nav-extra" href="/docs/testing/">Тестирование</a>
       <a class="nav-extra" href="/docs/performance/">Скорость</a>
       <a class="nav-extra" href="/docs/about/">О нас</a>
-      <a href="/demo/"{{if eq .Section "demo"}} aria-current="page"{{end}}>Демо</a>
-      <a href="/modeler/"{{if eq .Section "modeler"}} aria-current="page"{{end}}>Моделер</a>
-      <a href="/ui/">Консоль</a>
       <a href="{{.Repo}}" rel="noopener">GitHub</a>
     </nav>
     <button class="search-open" type="button" aria-label="Поиск по документации" data-search-open>
@@ -73,14 +74,27 @@
 {{define "bottom"}}
 <footer class="footer">
   <div class="footer-in">
-    <div>
-      <strong>go-bpm</strong> — BPM-движок на PostgreSQL для Go-сервисов.
-      Открытый код на <a href="{{.Repo}}" rel="noopener">GitHub</a>. <a href="/docs/about/">О нас</a>
-      · <a href="/docs/roadmap/">Дорожная карта</a>
-      · <a href="/docs/astra-linux/">Совместимость с Astra Linux</a>
-      · <a href="/docs/go-bpm-bank/">Пример банковского процесса</a>
-      · <a href="/go-bpm.pdf" download>Скачать презентацию</a> (PDF)
-    </div>
+    <div class="footer-intro"><strong>go-bpm</strong> — BPM-движок на PostgreSQL для Go-сервисов.</div>
+    <nav class="footer-nav" aria-label="Ссылки в подвале">
+      <div><strong>Начать работу</strong>
+        <a href="/docs/quickstart/">Быстрый старт</a>
+        <a href="/modeler/">Моделер</a>
+        <a href="/demo/">Демо</a>
+        <a href="/ui/">Консоль</a>
+      </div>
+      <div><strong>Изучить возможности</strong>
+        <a href="/docs/examples/">Разбор примеров</a>
+        <a href="/docs/go-bpm-bank/">Пример: открытие счёта</a>
+        <a href="/docs/testing/">Тестирование процессов</a>
+        <a href="/docs/astra-linux/">Совместимость с Astra Linux</a>
+      </div>
+      <div><strong>О проекте</strong>
+        <a href="/docs/about/">О нас</a>
+        <a href="/docs/roadmap/">Дорожная карта</a>
+        <a href="{{.Repo}}" rel="noopener">Исходный код на GitHub</a>
+        <a href="/go-bpm.pdf" download>Презентация (PDF)</a>
+      </div>
+    </nav>
     <div class="footer-meta">
       Обновлено {{.Updated}}{{if .Commit}} · документация из коммита <a href="{{.CommitURL}}" rel="noopener"><code>{{.Commit}}</code></a>{{end}}
     </div>

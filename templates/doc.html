@@ -2,13 +2,15 @@
 {{with .Page}}
 <div class="docs">
   <aside class="sidebar" aria-label="Документация">
-    <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-expanded="false">Разделы документации</button>
-    <nav class="sidebar-nav" data-sidebar>
-      <p class="sidebar-title">Документация</p>
+    <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-controls="docs-nav" aria-expanded="false">Разделы документации</button>
+    <nav id="docs-nav" class="sidebar-nav" data-sidebar>
+      {{range .Nav}}
+      <p class="sidebar-title">{{.Label}}</p>
       <ul>
-        {{range .Nav}}<li><a href="{{.URL}}"{{if .Active}} aria-current="page"{{end}}>{{.Label}}</a></li>
+        {{range .Items}}<li><a href="{{.URL}}"{{if .Active}} aria-current="page"{{end}}>{{.Label}}</a></li>
         {{end}}
       </ul>
+      {{end}}
       <p class="sidebar-title">Попробовать</p>
       <ul>
         <li><a href="/demo/">Живое демо</a></li>

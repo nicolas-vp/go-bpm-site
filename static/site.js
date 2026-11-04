@@ -45,6 +45,33 @@
     b.addEventListener('click', function () { copyText(b.dataset.copy, b); });
   });
 
+  // --- меню разделов на узких экранах ---
+  var menuToggle = document.querySelector('[data-menu-toggle]');
+  var mainnav = document.querySelector('#main-nav');
+  if (menuToggle && mainnav) {
+    function closeMenu() {
+      mainnav.classList.remove('open');
+      menuToggle.setAttribute('aria-expanded', 'false');
+    }
+    menuToggle.addEventListener('click', function () {
+      var open = mainnav.classList.toggle('open');
+      menuToggle.setAttribute('aria-expanded', String(open));
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && mainnav.classList.contains('open')) {
+        closeMenu();
+        menuToggle.focus();
+      }
+    });
+    document.addEventListener('click', function (e) {
+      if (!mainnav.contains(e.target) && !menuToggle.contains(e.target)) closeMenu();
+    });
+    mainnav.addEventListener('click', function (e) {
+      if (e.target.closest('a')) closeMenu();
+    });
+    window.matchMedia('(max-width: 1280px)').addEventListener('change', closeMenu);
+  }
+
   // --- меню документации на телефоне ---
   var toggle = document.querySelector('[data-sidebar-toggle]');
   var sidebar = document.querySelector('[data-sidebar]');
