@@ -31,4 +31,4 @@ go-bpm is an open source BPMN engine for Go services backed by PostgreSQL. BPMN 
 - [About us](about.md)
 - [Source code](https://github.com/nicolas-vp/go-bpm)
 
-The English guides cover the same subjects as the Russian documentation. Use the RU link to open the corresponding Russian reference with additional examples. Diagram labels, screenshots, the video and the shared demo console retain their original language.
+The English guides cover the same subjects as the Russian documentation. Use the RU link to open the corresponding Russian reference with additional examples. Diagram labels, screenshots and the shared demo console retain their original language.

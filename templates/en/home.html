@@ -24,7 +24,6 @@
       </figure>
     </div>
   </section>
-  <section class="section section-alt" id="video"><div class="wrap"><h2 class="section-title">go-bpm in two minutes</h2><p class="muted center">The modeler, code generation, transactional steps, performance and instance history. Narration and on-screen text are in Russian.</p><figure class="video"><video controls playsinline preload="none" poster="/static/video/go-bpm-poster.jpg" width="1920" height="1080"><source src="/static/video/go-bpm.mp4" type="video/mp4"><a href="/static/video/go-bpm.mp4">Download video (MP4, 12 MB)</a></video></figure></div></section>
   <section class="section"><div class="wrap"><h2 class="section-title">How it works</h2><ol class="steps">
     <li><span class="step-n">1</span><h3>Draw a process</h3><p>Use <a href="/en/modeler/">go-bpm modeler</a>, with supported elements and generator validation. Camunda Modeler diagrams work too: go-bpm reads <code>gobpm:*</code> and <code>zeebe:*</code> extensions. Keep BPMN and DMN files in <code>process/</code> and review them alongside code.</p></li>
     <li><span class="step-n">2</span><h3>Generate Go code</h3><p><code>go-bpm-gen</code> validates the diagram and generates transitions, gateway conditions, scripts, DMN decisions and method stubs. The compiler catches errors in expressions.</p></li>
