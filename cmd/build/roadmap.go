@@ -20,6 +20,8 @@ import (
 )
 
 type roadmapItem struct {
+	Source string `json:"source,omitempty"` // исходный заголовок для проверки перевода
+
 	Icon  string `json:"icon"`
 	Level int    `json:"level"` // сложность: 1 - быстро, 5 - долго
 	Title string `json:"title"`

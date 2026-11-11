@@ -131,18 +131,20 @@ type docPage struct {
 
 // layout - общие данные всех страниц.
 type layout struct {
-	Title       string
-	Description string
-	Section     string // home, docs, demo, modeler - подсветка в шапке
-	SiteURL     string
-	Path        string // адрес страницы от корня, для canonical; пустой - страницы нет в поиске (404)
-	JSONLD      template.JS
-	Repo        string
-	Commit      string
-	CommitURL   string
-	Year        int
-	Updated     string // время сборки по Москве, в подвале
-	Page        any
+	Lang          string
+	AlternatePath string
+	Title         string
+	Description   string
+	Section       string // home, docs, demo, modeler - подсветка в шапке
+	SiteURL       string
+	Path          string // адрес страницы от корня, для canonical; пустой - страницы нет в поиске (404)
+	JSONLD        template.JS
+	Repo          string
+	Commit        string
+	CommitURL     string
+	Year          int
+	Updated       string // время сборки по Москве, в подвале
+	Page          any
 }
 
 // searchEntry - раздел страницы в поисковом индексе.
@@ -165,7 +167,7 @@ func build(c config) error {
 		return err
 	}
 	now := time.Now().In(time.FixedZone("МСК", 3*60*60))
-	base := layout{Repo: c.repo, Year: now.Year(), Updated: now.Format("02.01.2006 15:04 МСК"), SiteURL: c.siteURL}
+	base := layout{Lang: "ru", Repo: c.repo, Year: now.Year(), Updated: now.Format("02.01.2006 15:04 МСК"), SiteURL: c.siteURL}
 	var sitemap []string
 	if c.commit != "" {
 		base.Commit = c.commit[:min(7, len(c.commit))]
@@ -311,7 +313,11 @@ func build(c config) error {
 		return err
 	}
 
-	if err := writeSEO(c, append([]string{"/", "/demo/", "/modeler/"}, sitemap...)); err != nil {
+	englishPaths, err := buildEnglish(c, base)
+	if err != nil {
+		return err
+	}
+	if err := writeSEO(c, append(append([]string{"/", "/demo/", "/modeler/"}, sitemap...), englishPaths...)); err != nil {
 		return err
 	}
 
@@ -429,6 +435,12 @@ func description(src string) string {
 }
 
 func render(tpl *template.Template, name string, data layout, file string) error {
+	if data.Lang == "" {
+		data.Lang = "ru"
+	}
+	if data.Path != "" && data.AlternatePath == "" {
+		data.AlternatePath = "/en" + data.Path
+	}
 	var b bytes.Buffer
 	if err := tpl.ExecuteTemplate(&b, name, data); err != nil {
 		return fmt.Errorf("%s: %w", name, err)

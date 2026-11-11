@@ -1417,3 +1417,7 @@ img { max-width: 100%; height: auto; }
   .rm-stages li:nth-child(odd)::before { display: none; }
   .prose .rm-stage { padding: 14px; }
 }
+
+/* Ссылка языка доступна и при свёрнутом меню. */
+.language-switch { flex-shrink: 0; font-size: .8rem; font-weight: 700; padding: .4rem; text-decoration: none; }
+.language-switch:hover { text-decoration: underline; }

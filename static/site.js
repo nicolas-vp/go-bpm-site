@@ -2,6 +2,8 @@
 (function () {
   'use strict';
 
+  var en = document.documentElement.lang === 'en';
+
   var root = document.documentElement;
 
   // --- тема: системная, пока посетитель не выбрал сам ---
@@ -24,7 +26,7 @@
   function copyText(text, button) {
     var done = function () {
       var label = button.textContent;
-      button.textContent = 'Скопировано';
+      button.textContent = (en ? "Copied" : 'Скопировано');
       setTimeout(function () { button.textContent = label; }, 1400);
     };
     if (navigator.clipboard) {
@@ -35,7 +37,7 @@
     var b = document.createElement('button');
     b.type = 'button';
     b.className = 'copy';
-    b.textContent = 'Копировать';
+    b.textContent = (en ? "Copy" : 'Копировать');
     b.addEventListener('click', function () {
       copyText(block.querySelector('code').innerText.replace(/\n$/, ''), b);
     });
@@ -126,7 +128,7 @@
     list.innerHTML = '';
     input.focus();
     if (!index) {
-      fetch('/search.json').then(function (r) { return r.json(); }).then(function (data) {
+      fetch(en ? '/en/search.json' : '/search.json').then(function (r) { return r.json(); }).then(function (data) {
         index = data.map(function (e) {
           e.lt = e.t.toLowerCase();
           e.lx = e.x.toLowerCase();
@@ -179,7 +181,7 @@
     hits = hits.slice(0, 12);
     selected = 0;
     if (!hits.length) {
-      list.innerHTML = '<li class="sr-none">Ничего не нашлось</li>';
+      list.innerHTML = (en ? "<li class=\"sr-none\">No results found</li>" : '<li class="sr-none">Ничего не нашлось</li>');
       return;
     }
     list.innerHTML = hits.map(function (h, i) {

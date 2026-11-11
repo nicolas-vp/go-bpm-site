@@ -2,6 +2,8 @@
 (function () {
   'use strict';
 
+  var en = document.documentElement.lang === 'en';
+
   var $ = function (sel, el) { return (el || document).querySelector(sel); };
   var $$ = function (sel, el) { return Array.prototype.slice.call((el || document).querySelectorAll(sel)); };
 
@@ -32,7 +34,7 @@
         try { data = text ? JSON.parse(text) : null; } catch (e) {}
         if (!r.ok) {
           var msg = (data && data.error) || text || r.statusText;
-          if (r.status === 429 || r.status === 503) msg = 'Слишком много запросов. Подождите немного и попробуйте снова.';
+          if (r.status === 429 || r.status === 503) msg = (en ? "Too many requests. Wait a moment and try again." : 'Слишком много запросов. Подождите немного и попробуйте снова.');
           var err = new Error(msg);
           err.status = r.status;
           throw err;
@@ -47,6 +49,7 @@
   var statusText = $('[data-status-text]');
 
   function plural(n, one, few, many) {
+    if (en) return n === 1 ? one : many;
     var m10 = n % 10, m100 = n % 100;
     if (m10 === 1 && m100 !== 11) return one;
     if (m10 >= 2 && m10 <= 4 && (m100 < 10 || m100 >= 20)) return few;
@@ -65,17 +68,17 @@
         var card = $('[data-process="' + p.id + '"] [data-count]');
         if (!card) return;
         var parts = [];
-        if (c.running) parts.push(c.running + ' в работе');
-        if (c.completed) parts.push(c.completed + ' ' + plural(c.completed, 'завершён', 'завершено', 'завершено'));
-        if (c.failed) parts.push(c.failed + ' ' + plural(c.failed, 'упал', 'упало', 'упало'));
-        if (c.cancelled) parts.push(c.cancelled + ' ' + plural(c.cancelled, 'отменён', 'отменено', 'отменено'));
+        if (c.running) parts.push(c.running + (en ? " running" : ' в работе'));
+        if (c.completed) parts.push(c.completed + ' ' + plural(c.completed, (en ? "completed" : 'завершён'), (en ? "completed" : 'завершено'), (en ? "completed" : 'завершено')));
+        if (c.failed) parts.push(c.failed + ' ' + plural(c.failed, (en ? "failed" : 'упал'), (en ? "failed" : 'упало'), (en ? "failed" : 'упало')));
+        if (c.cancelled) parts.push(c.cancelled + ' ' + plural(c.cancelled, (en ? "cancelled" : 'отменён'), (en ? "cancelled" : 'отменено'), (en ? "cancelled" : 'отменено')));
         card.textContent = parts.join(' · ');
       });
-      statusText.textContent = 'Демо работает · ' + total + ' ' + plural(total, 'экземпляр', 'экземпляра', 'экземпляров') + ' в базе';
+      statusText.textContent = (en ? "Demo is online \u00b7 " : 'Демо работает · ') + total + ' ' + plural(total, (en ? "instance" : 'экземпляр'), (en ? "instances" : 'экземпляра'), (en ? "instances" : 'экземпляров')) + (en ? " in the database" : ' в базе');
     }).catch(function () {
       statusBox.classList.add('down');
       statusBox.classList.remove('up');
-      statusText.textContent = 'Демо сейчас не отвечает — попробуйте позже';
+      statusText.textContent = (en ? "The demo is not responding. Try again later." : 'Демо сейчас не отвечает — попробуйте позже');
     });
   }
 
@@ -116,13 +119,13 @@
     error: $('[data-run-error]'),
   };
 
-  var STATUS = { running: 'в работе', completed: 'завершён', failed: 'упал', cancelled: 'отменён' };
-  var EVENT = { activated: 'ждёт', completed: 'пройден', terminated: 'прерван' };
+  var STATUS = { running: (en ? "running" : 'в работе'), completed: (en ? "completed" : 'завершён'), failed: (en ? "failed" : 'упал'), cancelled: (en ? "cancelled" : 'отменён') };
+  var EVENT = { activated: (en ? "waiting" : 'ждёт'), completed: (en ? "completed" : 'пройден'), terminated: (en ? "terminated" : 'прерван') };
   var TYPE = {
-    startEvent: 'старт', endEvent: 'конец', task: 'метод', scriptTask: 'скрипт', serviceTask: 'service task',
-    businessRuleTask: 'правило DMN', userTask: 'задача пользователя', exclusiveGateway: 'шлюз',
-    parallelGateway: 'параллельный шлюз', intermediateCatchEvent: 'таймер', boundaryEvent: 'граничное событие',
-    subProcess: 'подпроцесс', callActivity: 'вызов процесса', receiveTask: 'ждёт сообщение',
+    startEvent: (en ? "start" : 'старт'), endEvent: (en ? "end" : 'конец'), task: (en ? "method" : 'метод'), scriptTask: (en ? "script" : 'скрипт'), serviceTask: 'service task',
+    businessRuleTask: (en ? "DMN rule" : 'правило DMN'), userTask: (en ? "user task" : 'задача пользователя'), exclusiveGateway: (en ? "gateway" : 'шлюз'),
+    parallelGateway: (en ? "parallel gateway" : 'параллельный шлюз'), intermediateCatchEvent: (en ? "timer" : 'таймер'), boundaryEvent: (en ? "boundary event" : 'граничное событие'),
+    subProcess: (en ? "subprocess" : 'подпроцесс'), callActivity: (en ? "call activity" : 'вызов процесса'), receiveTask: (en ? "waiting for a message" : 'ждёт сообщение'),
   };
 
   var WITH_TASKS = { TestUserTask: true, TestMultiInstance: true }; // процессы с задачами пользователей
@@ -154,18 +157,18 @@
       return element(r.process_name, r.element_id).type !== 'sequenceFlow';
     }).map(function (r) {
       var el = element(r.process_name, r.element_id);
-      var title = el.name || r.element_id;
+      var title = (en ? '' : el.name) || r.element_id;
       var kind = TYPE[el.type] || '';
       var ms = Date.parse(r.created_at) - t0;
-      var ts = ms < 1000 ? '+' + ms + ' мс' : '+' + (ms / 1000).toFixed(1) + ' с';
+      var ts = ms < 1000 ? '+' + ms + (en ? " ms" : ' мс') : '+' + (ms / 1000).toFixed(1) + (en ? " s" : ' с');
       var sub = r.parent_instance_uid ? r.process_name : '';
       return '<li class="' + r.event + (r.parent_instance_uid ? ' child' : '') + '">' +
         '<span><span class="el">' + escapeHTML(title) + '</span> <span class="ev">' +
         escapeHTML([kind, EVENT[r.event] || r.event].filter(Boolean).join(', ')) + '</span></span>' +
         '<span class="ts">' + ts + '</span>' +
-        (sub ? '<span class="sub">в экземпляре ' + escapeHTML(sub) + '</span>' : '') + '</li>';
+        (sub ? (en ? "<span class=\"sub\">in instance " : '<span class="sub">в экземпляре ') + escapeHTML(sub) + '</span>' : '') + '</li>';
     });
-    run.timeline.innerHTML = items.join('') || '<li class="activated"><span class="ev">Старт записан в очередь…</span></li>';
+    run.timeline.innerHTML = items.join('') || (en ? "<li class=\"activated\"><span class=\"ev\">Start queued\u2026</span></li>" : '<li class="activated"><span class="ev">Старт записан в очередь…</span></li>');
     run.timeline.scrollTop = run.timeline.scrollHeight;
 
     run.vars.hidden = !lastVars;
@@ -181,23 +184,23 @@
     var t = tasks[0];
     var actions = [];
     if (t.element_id === 'Approve') {
-      actions.push({ label: 'Согласовать как bob', user: 'bob', groups: ['managers'], vars: { approved: true } });
-      actions.push({ label: 'Вернуть на исправление', user: 'bob', groups: ['managers'], ghost: true,
-        vars: { approved: false, comment: 'нет суммы' } });
+      actions.push({ label: (en ? "Approve as bob" : 'Согласовать как bob'), user: 'bob', groups: ['managers'], vars: { approved: true } });
+      actions.push({ label: (en ? "Return for correction" : 'Вернуть на исправление'), user: 'bob', groups: ['managers'], ghost: true,
+        vars: { approved: false, comment: (en ? "amount missing" : 'нет суммы') } });
     } else if (t.element_id === 'Fix') {
-      actions.push({ label: 'Исправить как ' + (t.assignee || 'alice'), user: t.assignee || 'alice', vars: { amount: 100 } });
+      actions.push({ label: (en ? "Correct as " : 'Исправить как ') + (t.assignee || 'alice'), user: t.assignee || 'alice', vars: { amount: 100 } });
     } else if (t.element_id === 'Review') {
-      actions.push({ label: 'Согласовать как bob', user: 'bob', groups: ['managers'], vars: { approved: true } });
-      actions.push({ label: 'Не согласовать: ещё круг', user: 'bob', groups: ['managers'], ghost: true,
+      actions.push({ label: (en ? "Approve as bob" : 'Согласовать как bob'), user: 'bob', groups: ['managers'], vars: { approved: true } });
+      actions.push({ label: (en ? "Reject: another round" : 'Не согласовать: ещё круг'), user: 'bob', groups: ['managers'], ghost: true,
         vars: { approved: false } });
     } else {
       var user = t.assignee || 'demo';
-      actions.push({ label: 'Выполнить как ' + user, user: user, groups: t.candidate_groups || [], vars: {} });
+      actions.push({ label: (en ? "Complete as " : 'Выполнить как ') + user, user: user, groups: t.candidate_groups || [], vars: {} });
     }
-    var who = t.assignee ? 'назначена ' + t.assignee :
-      (t.candidate_groups && t.candidate_groups.length ? 'для групп ' + t.candidate_groups.join(', ') : 'для любого');
-    var round = t.variables && t.variables.loopCounter ? ', круг ' + t.variables.loopCounter + ' из 3' : '';
-    showActions('<p>Процесс ждёт человека: <strong>' + escapeHTML(t.name || t.element_id) + '</strong>, ' +
+    var who = t.assignee ? (en ? "assigned to " : 'назначена ') + t.assignee :
+      (t.candidate_groups && t.candidate_groups.length ? (en ? "for groups " : 'для групп ') + t.candidate_groups.join(', ') : (en ? "for anyone" : 'для любого'));
+    var round = t.variables && t.variables.loopCounter ? (en ? ", round " : ', круг ') + t.variables.loopCounter + (en ? " of 3" : ' из 3') : '';
+    showActions((en ? "<p>Waiting for a person: <strong>" : '<p>Процесс ждёт человека: <strong>') + escapeHTML((en ? '' : t.name) || t.element_id) + '</strong>, ' +
       escapeHTML(who + round) + '.</p>', actions.map(function (a) {
       return { label: a.label, ghost: a.ghost, run: function () { return completeTask(t, a); } };
     }));
@@ -221,9 +224,9 @@
       return;
     }
     var msg = { name: 'paymentReceived', correlationKey: inst.business_key, variables: { paid: true } };
-    showActions('<p>Процесс ждёт сообщение <code>paymentReceived</code> с ключом <code>' +
-      escapeHTML(inst.business_key) + '</code> — так платёжная система сообщила бы об оплате.</p>', [
-      { label: 'Прислать оплату', run: function () { return api('POST', '/messages', msg); } },
+    showActions((en ? "<p>Waiting for message <code>paymentReceived</code> with key <code>" : '<p>Процесс ждёт сообщение <code>paymentReceived</code> с ключом <code>') +
+      escapeHTML(inst.business_key) + (en ? "</code>, as a payment system would report a payment.</p>" : '</code> — так платёжная система сообщила бы об оплате.</p>'), [
+      { label: (en ? "Send payment" : 'Прислать оплату'), run: function () { return api('POST', '/messages', msg); } },
     ]);
   }
 
@@ -295,10 +298,10 @@
     }).catch(function (e) {
       if (e.status === 404) {
         try { sessionStorage.removeItem('demo.instance'); } catch (x) {}
-        showError('Экземпляр не найден — возможно, его уже удалила очистка демо.');
+        showError((en ? "Instance not found. Demo cleanup may have removed it." : 'Экземпляр не найден — возможно, его уже удалила очистка демо.'));
         return;
       }
-      showError('Не удалось получить экземпляр: ' + e.message);
+      showError((en ? "Could not fetch instance: " : 'Не удалось получить экземпляр: ') + e.message);
       pollTimer = setTimeout(poll, POLL_MS * 4);
     });
   }
@@ -332,7 +335,7 @@
         }
       }).catch(function (e) {
         run.empty.hidden = false;
-        showError('Не удалось запустить: ' + e.message);
+        showError((en ? "Could not start process: " : 'Не удалось запустить: ') + e.message);
       }).then(function () {
         setTimeout(function () { b.disabled = false; }, 800);
       });

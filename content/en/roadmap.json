@@ -1,0 +1,218 @@
+{
+  "stages": [
+    {
+      "id": "docs",
+      "heading": "Stage 1. Documentation",
+      "short": "Documentation",
+      "icon": "book",
+      "items": [
+        {
+          "icon": "repeat",
+          "level": 1,
+          "title": "Execution semantics",
+          "text": "At-least-once execution, task leases, retries after failure, idempotent methods and handlers, and when to use service tasks.",
+          "source": "Семантика исполнения"
+        },
+        {
+          "icon": "hourglass",
+          "level": 1,
+          "title": "Waiting for external events",
+          "text": "When to use messages, system-completed user tasks or polling service tasks, with examples and pitfalls.",
+          "source": "Ожидание внешних событий"
+        },
+        {
+          "icon": "shield",
+          "level": 1,
+          "title": "Security",
+          "text": "Protecting the API and console, deriving task identity from authentication and choosing safe process variables.",
+          "source": "Безопасность"
+        },
+        {
+          "icon": "branch",
+          "level": 1,
+          "title": "Changing processes",
+          "text": "Compatible changes, removing elements with running instances and using KindPrefix for incompatible versions.",
+          "source": "Изменение процессов"
+        },
+        {
+          "icon": "layers",
+          "level": 1,
+          "title": "Reference architecture",
+          "text": "A Kubernetes service with a dedicated engine database or a shared service database, including tradeoffs.",
+          "source": "Референсная архитектура"
+        },
+        {
+          "icon": "migrate",
+          "level": 2,
+          "title": "Migrating from Camunda 7",
+          "text": "Reusing diagrams and DMN tables, rewriting delegates and expressions, and handling in-flight instances.",
+          "source": "Переход с Camunda 7"
+        }
+      ]
+    },
+    {
+      "id": "ops",
+      "heading": "Stage 2. Operations and security",
+      "short": "Operations",
+      "icon": "gear",
+      "items": [
+        {
+          "icon": "chart",
+          "level": 2,
+          "title": "Prometheus metrics",
+          "text": "Queue states, oldest task age, instance states, open user tasks and attempt durations through client_golang.",
+          "source": "Метрики Prometheus"
+        },
+        {
+          "icon": "key",
+          "level": 2,
+          "title": "API and console authorization",
+          "text": "Resolve user identity and groups from a request instead of taking the task assignee from its body.",
+          "source": "Авторизация API и консоли"
+        },
+        {
+          "icon": "journal",
+          "level": 2,
+          "title": "Operations audit log",
+          "text": "Record who retried a task, edited variables or cancelled an instance, and when.",
+          "source": "Журнал операций"
+        },
+        {
+          "icon": "broom",
+          "level": 2,
+          "title": "History retention",
+          "text": "engine.Retention removes old completed and cancelled instances with element/rule history and user tasks.",
+          "source": "Очистка истории"
+        },
+        {
+          "icon": "plug",
+          "level": 2,
+          "title": "Engine hooks",
+          "text": "engine.Hooks provides element events, service call wrappers for tracing, and instance failure callbacks for alerts.",
+          "source": "Хуки движка"
+        },
+        {
+          "icon": "badge",
+          "level": 1,
+          "title": "Supply chain security",
+          "text": "CI vulnerability checks, image SBOM and provenance, and keyless cosign signatures.",
+          "source": "Безопасность поставки"
+        }
+      ]
+    },
+    {
+      "id": "bpmn",
+      "heading": "Stage 3. Missing BPMN features",
+      "short": "BPMN",
+      "icon": "puzzle",
+      "items": [
+        {
+          "icon": "mail",
+          "level": 3,
+          "title": "Messages with key correlation",
+          "text": "Receive tasks and intermediate catches wait for messages from HTTP or Go; TTL buffers early responses.",
+          "source": "Сообщения с корреляцией по бизнес-ключу"
+        },
+        {
+          "icon": "alarm",
+          "level": 3,
+          "title": "User task boundary timers",
+          "text": "Escalate overdue work by cancelling a user task and following a different process path.",
+          "source": "Граничный таймер у задачи пользователя"
+        },
+        {
+          "icon": "alarm",
+          "level": 3,
+          "title": "Call activity and subprocess boundary events",
+          "text": "Apply a deadline or error route to an entire child process.",
+          "source": "Граничные события у call activity и подпроцесса"
+        },
+        {
+          "icon": "bell",
+          "level": 3,
+          "title": "Non-interrupting boundary timers",
+          "text": "Send reminders or notifications without interrupting the activity.",
+          "source": "Непрерывающий граничный таймер"
+        },
+        {
+          "icon": "calendar",
+          "level": 2,
+          "title": "timeDate timers",
+          "text": "Use an RFC 3339 deadline or a process variable for intermediate and boundary timers.",
+          "source": "Таймер timeDate"
+        },
+        {
+          "icon": "calendar",
+          "level": 2,
+          "title": "timeCycle timers",
+          "text": "Repeating timers for reminders and scheduled starts.",
+          "source": "Таймер timeCycle"
+        },
+        {
+          "icon": "database",
+          "level": 3,
+          "title": "History partitioning",
+          "text": "Partition bpm_history by time for predictable growth and partition-based cleanup.",
+          "source": "Секционирование истории"
+        },
+        {
+          "icon": "gauge",
+          "level": 2,
+          "title": "Server load testing",
+          "text": "Multiple service replicas sharing a database, p99 latency and PostgreSQL replica failover.",
+          "source": "Нагрузочный тест на сервере"
+        }
+      ]
+    },
+    {
+      "id": "advanced",
+      "heading": "Stage 4. Advanced BPMN",
+      "short": "Advanced BPMN",
+      "icon": "mountain",
+      "items": [
+        {
+          "icon": "stack",
+          "level": 4,
+          "title": "Sequential multi-instance",
+          "text": "Repeat tasks, subprocesses or call activities with a count and completion condition.",
+          "source": "Последовательный multi-instance"
+        },
+        {
+          "icon": "stack",
+          "level": 5,
+          "title": "Parallel multi-instance",
+          "text": "Concurrent iterations and collection-driven work, such as approval by everyone in a list.",
+          "source": "Параллельный multi-instance"
+        },
+        {
+          "icon": "undo",
+          "level": 5,
+          "title": "Compensation",
+          "text": "BPMN saga rollback using compensating tasks.",
+          "source": "Компенсации"
+        },
+        {
+          "icon": "split",
+          "level": 4,
+          "title": "Inclusive and event-based gateways",
+          "text": "Conditional multi-branch selection and waiting for the first message or timer.",
+          "source": "Inclusive и event-based gateway"
+        },
+        {
+          "icon": "bolt",
+          "level": 4,
+          "title": "Message starts and interruptions",
+          "text": "Start a process from an incoming event or interrupt an activity with a boundary message.",
+          "source": "Старт и прерывание по сообщению"
+        },
+        {
+          "icon": "import",
+          "level": 4,
+          "title": "Camunda 7 generator attributes",
+          "text": "Reuse Camunda 7 diagrams without redrawing them in a Camunda 8 modeler.",
+          "source": "Атрибуты Camunda 7 в генераторе"
+        }
+      ]
+    }
+  ]
+}

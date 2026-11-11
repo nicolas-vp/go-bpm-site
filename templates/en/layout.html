@@ -1,0 +1,109 @@
+{{define "top"}}<!doctype html>
+<html lang="{{.Lang}}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+{{- $title := printf "%s · go-bpm" .Title}}
+{{- if eq .Section "home"}}{{$title = printf "go-bpm — %s" .Title}}
+{{- else if not .Path}}
+{{- else if contains .Title "go-bpm"}}{{$title = printf "%s — BPMN engine for Go" .Title}}
+{{- else}}{{$title = printf "%s · go-bpm, BPMN engine for Go" .Title}}{{end}}
+<title>{{$title}}</title>
+{{with .Description}}<meta name="description" content="{{.}}">{{end}}
+{{- if .Path}}
+<link rel="canonical" href="{{.SiteURL}}{{.Path}}">
+<link rel="alternate" hreflang="{{.Lang}}" href="{{.SiteURL}}{{.Path}}">
+<link rel="alternate" hreflang="{{if eq .Lang "en"}}ru{{else}}en{{end}}" href="{{.SiteURL}}{{.AlternatePath}}">
+<meta property="og:url" content="{{.SiteURL}}{{.Path}}">
+{{- else}}
+<meta name="robots" content="noindex">
+{{- end}}
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="go-bpm">
+<meta property="og:locale" content="{{if eq .Lang "en"}}en_US{{else}}ru_RU{{end}}">
+<meta property="og:title" content="{{$title}}">
+{{with .Description}}<meta property="og:description" content="{{.}}">{{end}}
+<meta property="og:image" content="{{.SiteURL}}/static/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+{{with .JSONLD}}<script type="application/ld+json">{{.}}</script>{{end}}
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/static/style.css">
+<script>try{var t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script src="/static/site.js" defer></script>
+</head>
+<body class="page-{{.Section}}">
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="brand" href="/en/" aria-label="go-bpm home">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><circle cx="7" cy="16" r="4.5"/><path d="M11.5 16h4"/><rect x="15.5" y="10" width="10" height="12" rx="3"/><path d="M25.5 16h0"/></svg>
+      <span>go-bpm</span>
+    </a>
+    <button class="menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="main-nav">Menu</button>
+    <nav id="main-nav" class="mainnav" aria-label="Sections">
+      <a href="/en/docs/"{{if eq .Section "docs"}} aria-current="page"{{end}}>Documentation</a>
+      <a href="/en/modeler/"{{if eq .Section "modeler"}} aria-current="page"{{end}}>Modeler</a>
+      <a href="/en/demo/"{{if eq .Section "demo"}} aria-current="page"{{end}}>Demo</a>
+      <a href="/ui/">Console</a>
+      <a class="nav-extra" href="/en/docs/testing/">Testing</a>
+      <a class="nav-extra" href="/en/docs/performance/">Performance</a>
+      <a class="nav-extra" href="/en/docs/about/">About us</a>
+      <a href="{{.Repo}}" rel="noopener">GitHub</a>
+    </nav>
+    <button class="search-open" type="button" aria-label="Search documentation" data-search-open>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg>
+      <span>Search</span><kbd>/</kbd>
+    </button>
+    {{if .Path}}<a class="language-switch" href="{{.AlternatePath}}" lang="{{if eq .Lang "en"}}ru{{else}}en{{end}}" hreflang="{{if eq .Lang "en"}}ru{{else}}en{{end}}" aria-label="{{if eq .Lang "en"}}Switch to Russian{{else}}Switch to English{{end}}">{{if eq .Lang "en"}}RU{{else}}EN{{end}}</a>{{end}}
+    <button class="theme-toggle" type="button" aria-label="Toggle theme" data-theme-toggle>
+      <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg>
+      <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z"/></svg>
+    </button>
+  </div>
+</header>
+<div class="search" hidden data-search>
+  <div class="search-box" role="dialog" aria-modal="true" aria-label="Search documentation">
+    <input type="search" placeholder="Search documentation" autocomplete="off" data-search-input>
+    <ol class="search-results" data-search-results></ol>
+    <p class="search-hint">Arrow keys to select, Enter to open, Esc to close</p>
+  </div>
+</div>
+{{end}}
+
+{{define "bottom"}}
+<footer class="footer">
+  <div class="footer-in">
+    <div class="footer-intro"><strong>go-bpm</strong> — A PostgreSQL BPM engine for Go services.</div>
+    <nav class="footer-nav" aria-label="Footer links">
+      <div><strong>Get started</strong>
+        <a href="/en/docs/quickstart/">Quick start</a>
+        <a href="/en/modeler/">Modeler</a>
+        <a href="/en/demo/">Demo</a>
+        <a href="/ui/">Console</a>
+      </div>
+      <div><strong>Explore</strong>
+        <a href="/en/docs/examples/">Demo walkthrough</a>
+        <a href="/en/docs/go-bpm-bank/">Example: account opening</a>
+        <a href="/en/docs/go-bpm-ai-orchestrator/">BPMN for LLM orchestration</a>
+        <a href="/en/docs/testing/">Testing processes</a>
+        <a href="/en/docs/astra-linux/">Astra Linux compatibility</a>
+      </div>
+      <div><strong>About the project</strong>
+        <a href="/en/docs/about/">About us</a>
+        <a href="/en/docs/roadmap/">Roadmap</a>
+        <a href="{{.Repo}}" rel="noopener">Source code on GitHub</a>
+        <a href="/go-bpm.pdf" download>Presentation (PDF, Russian)</a>
+      </div>
+    </nav>
+    <div class="footer-meta">
+      Updated {{.Updated}}{{if .Commit}} · documentation from commit <a href="{{.CommitURL}}" rel="noopener"><code>{{.Commit}}</code></a>{{end}}
+    </div>
+  </div>
+</footer>
+</body>
+</html>
+{{end}}

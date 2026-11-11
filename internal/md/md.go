@@ -27,6 +27,8 @@ type Doc struct {
 
 // Options - как переписывать ссылки и картинки.
 type Options struct {
+	AnchorLabel string // подпись ссылки на раздел; по умолчанию на русском
+
 	// Link получает адрес ссылки или картинки из исходника и возвращает адрес на сайте.
 	Link func(dest string, image bool) string
 }
@@ -35,6 +37,9 @@ type Options struct {
 func Render(src string, opt Options) Doc {
 	if opt.Link == nil {
 		opt.Link = func(dest string, _ bool) string { return dest }
+	}
+	if opt.AnchorLabel == "" {
+		opt.AnchorLabel = "Ссылка на раздел"
 	}
 	r := &renderer{opt: opt, slugs: map[string]int{}}
 	lines := strings.Split(strings.ReplaceAll(src, "\r\n", "\n"), "\n")
@@ -106,7 +111,7 @@ func (r *renderer) heading(b *strings.Builder, t string) {
 	b.WriteString("<" + tag + ` id="` + html.EscapeString(id) + `">`)
 	b.WriteString(r.inline(raw))
 	if level > 1 {
-		b.WriteString(`<a class="anchor" href="#` + html.EscapeString(id) + `" aria-label="Ссылка на раздел">#</a>`)
+		b.WriteString(`<a class="anchor" href="#` + html.EscapeString(id) + `" aria-label="` + html.EscapeString(r.opt.AnchorLabel) + `">#</a>`)
 	}
 	b.WriteString("</" + tag + ">\n")
 }

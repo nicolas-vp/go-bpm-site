@@ -1,0 +1,42 @@
+{{define "doc.html"}}{{template "top" .}}
+{{with .Page}}
+<div class="docs">
+  <aside class="sidebar" aria-label="Documentation">
+    <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-controls="docs-nav" aria-expanded="false">Documentation sections</button>
+    <nav id="docs-nav" class="sidebar-nav" data-sidebar>
+      {{range .Nav}}
+      <p class="sidebar-title">{{.Label}}</p>
+      <ul>
+        {{range .Items}}<li><a href="{{.URL}}"{{if .Active}} aria-current="page"{{end}}>{{.Label}}</a></li>
+        {{end}}
+      </ul>
+      {{end}}
+      <p class="sidebar-title">Try it</p>
+      <ul>
+        <li><a href="/en/demo/">Live demo</a></li>
+        <li><a href="/ui/">Console /ui/</a></li>
+      </ul>
+    </nav>
+  </aside>
+  <main id="main" class="doc">
+    <article class="prose">
+      {{.Content}}
+    </article>
+    <nav class="pager" aria-label="Adjacent pages">
+      {{with .Prev}}<a class="pager-prev" href="{{.URL}}"><span>Previous</span>{{.Label}}</a>{{else}}<span></span>{{end}}
+      {{with .Next}}<a class="pager-next" href="{{.URL}}"><span>Next</span>{{.Label}}</a>{{end}}
+    </nav>
+    <p class="edit"><a href="{{.EditURL}}" rel="noopener">Suggest an edit on GitHub</a></p>
+  </main>
+  {{if .Headings}}
+  <aside class="toc" aria-label="On this page">
+    <p class="toc-title">On this page</p>
+    <ul>
+      {{range .Headings}}<li{{if indent .Level}} class="sub"{{end}}><a href="#{{.ID}}">{{.Text}}</a></li>
+      {{end}}
+    </ul>
+  </aside>
+  {{end}}
+</div>
+{{end}}
+{{template "bottom" .}}{{end}}

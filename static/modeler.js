@@ -3,6 +3,8 @@
 (function () {
   "use strict";
 
+  var en = document.documentElement.lang === 'en';
+
   var root = document.querySelector("[data-downloads]");
   if (!root) return;
   var status = root.querySelector("[data-downloads-status]");
@@ -27,13 +29,14 @@
   }
 
   function size(bytes) {
-    return (bytes / 1048576).toFixed(1).replace(".", ",") + " МБ";
+    var value = (bytes / 1048576).toFixed(1);
+    return (en ? value : value.replace(".", ",")) + (en ? " MB" : " МБ");
   }
 
   function date(iso) {
     var d = new Date(iso);
     if (isNaN(d)) return iso;
-    return d.toLocaleString("ru-RU", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" });
+    return d.toLocaleString(en ? "en-US" : "ru-RU", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" });
   }
 
   function channel(m, title, note) {
@@ -43,7 +46,7 @@
     var meta = el("p", "modeler-meta");
     var version = el("code", null, m.version);
     meta.appendChild(version);
-    meta.appendChild(document.createTextNode(" · " + date(m.date) + " · коммит "));
+    meta.appendChild(document.createTextNode(" · " + date(m.date) + (en ? " \u00b7 commit " : " · коммит ")));
     var commit = el("a", null, m.commit.slice(0, 7));
     commit.href = m.commitUrl;
     commit.rel = "noopener";
@@ -62,7 +65,7 @@
       sum.title = "SHA-256";
       info.appendChild(sum);
       li.appendChild(info);
-      var a = el("a", "btn" + (mine.indexOf(f.platform) >= 0 ? " btn-primary" : ""), "Скачать");
+      var a = el("a", "btn" + (mine.indexOf(f.platform) >= 0 ? " btn-primary" : ""), (en ? "Download" : "Скачать"));
       a.href = m.url + f.file;
       a.setAttribute("download", "");
       li.appendChild(a);
@@ -81,18 +84,18 @@
       return r.json();
     })
     .then(function (index) {
-      if (!index.latest && !index.dev) throw new Error("сборок ещё нет");
+      if (!index.latest && !index.dev) throw new Error((en ? "no builds available yet" : "сборок ещё нет"));
       status.remove();
       if (index.latest) {
-        root.appendChild(channel(index.latest, "Стабильная версия " + index.latest.version));
+        root.appendChild(channel(index.latest, (en ? "Stable release " : "Стабильная версия ") + index.latest.version));
       }
       if (index.dev) {
-        root.appendChild(channel(index.dev, "Сборка из main",
-          index.latest ? "Самые свежие изменения, раньше релиза. Может быть нестабильной."
-            : "Стабильных релизов пока нет — это последняя сборка из ветки main."));
+        root.appendChild(channel(index.dev, (en ? "Build from main" : "Сборка из main"),
+          index.latest ? (en ? "The latest changes before release. May be unstable." : "Самые свежие изменения, раньше релиза. Может быть нестабильной.")
+            : (en ? "No stable releases yet. This is the latest build from main." : "Стабильных релизов пока нет — это последняя сборка из ветки main.")));
       }
     })
     .catch(function (err) {
-      status.textContent = "Не удалось загрузить список сборок: " + err.message + ". Сборки есть и в артефактах CI на GitHub.";
+      status.textContent = (en ? "Could not load available builds: " : "Не удалось загрузить список сборок: ") + err.message + (en ? ". Builds are also available as GitHub CI artifacts." : ". Сборки есть и в артефактах CI на GitHub.");
     });
 })();

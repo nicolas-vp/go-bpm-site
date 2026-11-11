@@ -1,0 +1,190 @@
+{{define "demo.html"}}{{template "top" .}}
+<main id="main" class="demo" data-demo>
+  <section class="demo-head">
+    <div class="wrap">
+      <p class="eyebrow">Live demo</p>
+      <h1>Start a process and follow the engine</h1>
+      <p class="lead">This server runs the PostgreSQL-backed <code>examples/demo</code> service from the go-bpm repository. Choose a process, start an instance and follow its status, executed elements and variables. Open the <a href="/ui/">console</a> for full diagram history and all instances. The shared console and diagram labels are in Russian.</p>
+      <div class="demo-status" data-status>
+        <span class="pulse"></span><span data-status-text>Checking demo availability…</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap demo-grid">
+    <div class="processes" data-processes>
+      <article class="proc" data-process="TestUserTask">
+        <header>
+          <h2>Request approval</h2>
+          <code class="proc-id">TestUserTask</code>
+          <span class="count" data-count></span>
+        </header>
+        <img src="/docs/images/demo-user-task.svg" alt="TestUserTask: approval, decision gateway and correction loop" loading="lazy">
+        <p>User tasks work like Camunda 7. A manager from the <code>managers</code> group approves the request. Returning it for correction assigns it to the initiator, <code>alice</code>; after correction, it goes back for approval.</p>
+        <div class="runs">
+          <button class="btn btn-primary" type="button"
+            data-start='{"variables":{"initiator":"alice"},"businessKey":"request"}'>Submit request</button>
+        </div>
+        <a class="proc-more" href="/en/docs/examples/#testusertask">Process walkthrough</a>
+      </article>
+
+      <article class="proc" data-process="TestDecision">
+        <header>
+          <h2>DMN business rules</h2>
+          <code class="proc-id">TestDecision</code>
+          <span class="count" data-count></span>
+        </header>
+        <img src="/docs/images/demo-decision.svg" alt="TestDecision: two consecutive business rule tasks" loading="lazy">
+        <p>Two business rule tasks in sequence: <code>Decision_1</code> selects <code>c</code> from inputs <code>a</code> and <code>b</code>. The decision is compiled into a chain of Go <code>if</code> statements.</p>
+        <div class="runs">
+          <button class="btn" type="button" data-start='{"variables":{"a":"foo","b":"bar"}}'>a=foo, b=bar</button>
+          <button class="btn" type="button" data-start='{"variables":{"a":"some","b":"x"}}'>a=some, b=x</button>
+          <button class="btn" type="button" data-start='{"variables":{"a":"z","b":"some"}}'>a=z, b=some</button>
+          <button class="btn" type="button" data-start='{"variables":{"a":"z","b":"z"}}'>a=z, b=z</button>
+        </div>
+        <a class="proc-more" href="/en/docs/examples/#testdecision">Process walkthrough</a>
+      </article>
+
+      <article class="proc" data-process="TestBpmProcess">
+        <header>
+          <h2>Gateways, scripts and call activity</h2>
+          <code class="proc-id">TestBpmProcess</code>
+          <span class="count" data-count></span>
+        </header>
+        <img src="/docs/images/demo-bpm-process.svg" alt="TestBpmProcess: method, service task, call activity, amount gateway and parallel branches" loading="lazy">
+        <p>A method, service task, call to <code>testSubProcess</code> and exclusive gateway based on <code>amount</code>. With <code>amount = 1</code>, the default branch runs a script and two parallel branches with a join. A string value makes the first step fail: after 10 attempts over several minutes, fix the variables and retry from instance history.</p>
+        <div class="runs">
+          <button class="btn" type="button" data-start='{"variables":{"amount":55}}'>amount = 55</button>
+          <button class="btn" type="button" data-start='{"variables":{"amount":1}}'>amount = 1</button>
+          <button class="btn" type="button" data-start='{"variables":{"amount":"abc"}}'>amount = "abc"</button>
+        </div>
+        <a class="proc-more" href="/en/docs/examples/#testbpmprocess">Process walkthrough</a>
+      </article>
+
+      <article class="proc" data-process="testSubProcess">
+        <header>
+          <h2>Parallel service tasks</h2>
+          <code class="proc-id">testSubProcess</code>
+          <span class="count" data-count></span>
+        </header>
+        <img src="/docs/images/demo-sub-process.svg" alt="testSubProcess: method and three parallel service task branches" loading="lazy">
+        <p>Three parallel service task branches. Each enqueues a separate task; handlers for different job types run concurrently. The join waits for all three.</p>
+        <div class="runs">
+          <button class="btn" type="button" data-start='{}'>Run</button>
+        </div>
+        <a class="proc-more" href="/en/docs/examples/#testsubprocess">Process walkthrough</a>
+      </article>
+
+      <article class="proc" data-process="TestTimerAndException">
+        <header>
+          <h2>Timers and errors</h2>
+          <code class="proc-id">TestTimerAndException</code>
+          <span class="count" data-count></span>
+        </header>
+        <img src="/docs/images/demo-timer-and-exception.svg" alt="TestTimerAndException: boundary timers, errors and an intermediate timer" loading="lazy">
+        <p>A three-second intermediate timer and boundary events. Demo methods are stubs, so the process follows its main path. See the walkthrough for ways to trigger boundary events.</p>
+        <div class="runs">
+          <button class="btn" type="button" data-start='{}'>Run</button>
+        </div>
+        <a class="proc-more" href="/en/docs/examples/#testtimerandexception">Process walkthrough</a>
+      </article>
+
+      <article class="proc" data-process="TestMultiInstance">
+        <header>
+          <h2>Multi-instance: several rounds</h2>
+          <code class="proc-id">TestMultiInstance</code>
+          <span class="count" data-count></span>
+        </header>
+        <img class="small" src="/docs/images/demo-multi-instance.svg" alt="TestMultiInstance: sequential notifications and up to three reviews" loading="lazy">
+        <p>Sequential multi-instance: the notification method runs three times, each as a separate queued step. The review task repeats until approved, up to three rounds. The completion condition is <code>=approved</code>; <code>loopCounter</code> holds the round number.</p>
+        <div class="runs">
+          <button class="btn" type="button" data-start='{}'>Run</button>
+        </div>
+        <a class="proc-more" href="/en/docs/examples/#testmultiinstance">Process walkthrough</a>
+      </article>
+
+      <article class="proc" data-process="TestMessage">
+        <header>
+          <h2>Waiting for a message</h2>
+          <code class="proc-id">TestMessage</code>
+          <span class="count" data-count></span>
+        </header>
+        <img class="small" src="/docs/images/demo-message.svg" alt="TestMessage: payment receive task between start and end" loading="lazy">
+        <p>A receive task waits for <code>paymentReceived</code> from an external payment system. The message finds the instance by its business key. Send it with the button on the right or <code>POST /api/v1/messages</code>.</p>
+        <div class="runs">
+          <button class="btn" type="button" data-start='{"businessKey":"order"}'>Place an order</button>
+        </div>
+        <a class="proc-more" href="/en/docs/examples/#testmessage">Process walkthrough</a>
+      </article>
+
+      <article class="proc" data-process="TestAiTask">
+        <header>
+          <h2>AI task: request triage</h2>
+          <code class="proc-id">TestAiTask</code>
+          <span class="count" data-count></span>
+        </header>
+        <img class="small" src="/docs/images/demo-ai-task.svg" alt="TestAiTask: category and urgency AI tasks with a refusal boundary event" loading="lazy">
+        <p>Two AI tasks send a prompt containing <code>request</code> and write a text category into <code>category</code> and JSON urgency data into <code>triage</code>. A model refusal follows the <code>ai_refusal</code> boundary error. The demo uses a stub; implement <code>engine.AIClient</code> to connect your own model.</p>
+        <div class="runs">
+          <button class="btn" type="button" data-start='{"variables":{"request":"I cannot log in to mobile banking: it says invalid password"}}'>Submit request</button>
+        </div>
+        <a class="proc-more" href="/en/docs/examples/#testaitask">Process walkthrough</a>
+      </article>
+    </div>
+
+    <aside class="run" data-run aria-live="polite">
+      <div class="run-card">
+        <div class="run-empty" data-run-empty>
+          <h2>Your instance</h2>
+          <p>Start a process on the left to see its status and token path here. Updates appear automatically.</p>
+          <div class="run-curl">
+            <p class="muted">The same request from a terminal:</p>
+            <div class="code" data-lang="sh"><pre><code><span class="tok-builtin">curl</span> <span class="tok-flag">-XPOST</span> <span data-origin>https://go-bpm.tech</span>/api/v1/processes/TestDecision/instances \
+  <span class="tok-flag">-d</span> <span class="tok-string">'{"variables":{"a":"foo","b":"bar"}}'</span></code></pre></div>
+          </div>
+        </div>
+        <div class="run-body" data-run-body hidden>
+          <header class="run-head">
+            <div>
+              <p class="run-proc" data-run-proc></p>
+              <code class="run-id" data-run-id></code>
+            </div>
+            <span class="badge" data-run-status></span>
+          </header>
+          <div class="run-tasks" data-run-tasks hidden></div>
+          <ol class="timeline" data-run-timeline></ol>
+          <div class="run-vars" data-run-vars hidden>
+            <p class="run-label">Variables</p>
+            <pre data-run-vars-json></pre>
+          </div>
+          <div class="run-links">
+            <a class="btn btn-primary" data-run-history href="/ui/">Diagram history</a>
+            <a class="btn btn-ghost" href="/ui/#/instances">All instances</a>
+          </div>
+        </div>
+        <p class="run-error" data-run-error hidden></p>
+      </div>
+      <p class="demo-note">This is a shared demo: instances are visible to everyone, and completed instances are removed after a few days. Anyone can retry or cancel any instance. Do not enter personal information.</p>
+    </aside>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap">
+      <h2 class="section-title">Console <code>/ui/</code></h2>
+      <p class="muted center">Built into go-bpm with <code>webui.Register(mux, history)</code>. This is the same console used by the demo service, with all its processes and instances.</p>
+      <div class="console-shots">
+        <a href="/ui/#/processes"><img src="/docs/images/console-processes.png" alt="Processes: instance counters and process diagram" loading="lazy"><span>Processes and diagrams</span></a>
+        <a href="/ui/#/instances"><img src="/docs/images/console-instances.png" alt="Instances: filters, states, business keys and parent links" loading="lazy"><span>Find instances</span></a>
+        <a href="/ui/#/tasks"><img src="/docs/images/console-tasks.png" alt="Tasks: personal user tasks and group queue" loading="lazy"><span>User tasks</span></a>
+      </div>
+      <ul class="console-more">
+        <li><a href="/ui/#/heatmap?process=TestTimerAndException"><strong>Heatmap</strong></a>: color elements by average, maximum or total duration, or execution count.</li>
+        <li><a href="/ui/#/stats?process=TestBpmProcess&amp;days=30"><strong>Statistics</strong></a>: instance outcomes by start date, median and p95 completion time.</li>
+        <li><strong>Failed instances</strong>: inspect errors and attempts above the history diagram, retry steps, fix variables or cancel an instance.</li>
+      </ul>
+      <p class="center"><a class="btn btn-primary" href="/ui/">Open console</a></p>
+    </div>
+  </section>
+</main>
+<script src="/static/demo.js" defer></script>
+{{template "bottom" .}}{{end}}
